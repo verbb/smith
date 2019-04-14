@@ -1,6 +1,10 @@
-Smith Plugin for Craft CMS
+# Smith Plugin for Craft CMS
+
+<img width="500" src="https://verbb.io/uploads/plugins/smith/smith-social-card.png">
 
 Smith extends the native behaviour of matrix fields, by adding Copy, Paste and Clone functionality to each block. This allows you to duplicate matrix blocks, or even copy and paste content between entries in different sections.
+
+<img width="900" src="https://verbb.io/uploads/plugins/smith/smith-demo.gif">
 
 Smith adds these functions to the settings 'cog' icon, in the top-right of each matrix block.
 
@@ -15,7 +19,7 @@ To paste a single block, or multiple blocks, select `Paste` in the settings menu
 
 You can only paste from blocks that were copied from the same Matrix field. However, this will work across entries and sections. You cannot copy blocks from one matrix field to another (the blocks will most likely be different).
 
-# Credit & Thanks
+## Credit & Thanks
 A big shoutout to [Neo](https://github.com/spicywebau/craft-neo) for introducing copy/paste/clone functionality for their plugin, which this is obviously inspired by, and [Spoon](https://github.com/angell-co/Spoon).
 
 <h2></h2>
