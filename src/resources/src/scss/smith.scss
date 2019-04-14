@@ -1,0 +1,51 @@
+// ==========================================================================
+
+// Smith for Craft CMS
+// Author: Verbb - https://verbb.io/
+
+// ==========================================================================
+
+@import "base";
+
+.smith-spinner {
+    width: 100%;
+}
+
+@font-face {
+    font-family: 'Font Awesome 5 Free';
+    font-style: normal;
+    font-weight: 900;
+    font-display: auto;
+    src: url("../fonts/fa-regular-400.eot");
+    src: url("../fonts/fa-regular-400.eot?#iefix") format("embedded-opentype"),
+        url("../fonts/fa-regular-400.woff2") format("woff2"),
+        url("../fonts/fa-regular-400.woff") format("woff"),
+        url("../fonts/fa-regular-400.ttf") format("truetype"),
+        url("../fonts/fa-regular-400.svg#fontawesome") format("svg");
+}
+
+.menu ul li a[data-icon="copy"]:before,
+.menu ul li a[data-icon="paste"]:before,
+.menu ul li a[data-icon="clone"]:before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 400;
+    text-align: left;
+}
+
+.menu ul li a[data-icon="copy"]:before {
+    content: '\f0c5';
+}
+
+.menu ul li a[data-icon="paste"]:before {
+    content: '\f328';
+    padding-left: 1px !important;
+}
+
+.menu ul li a[data-icon="clone"]:before {
+    content: '\f24d';
+    font-size: 12px !important;
+    padding-top: 2px !important;
+}
+
+
+

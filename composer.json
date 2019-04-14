@@ -1,0 +1,41 @@
+{
+    "name": "verbb/smith",
+    "description": "Add copy, paste and clone functionality to Matrix blocks.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "smith"
+    ],
+    "support": {
+        "email": "support@verbb.io",
+        "issues": "https://github.com/verbb/smith/issues?state=open",
+        "source": "https://github.com/verbb/smith",
+        "docs": "https://github.com/verbb/smith",
+        "rss": "https://github.com/verbb/smith/commits/v2.atom"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Verbb",
+            "homepage": "https://verbb.io"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "verbb\\smith\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Smith",
+        "handle": "smith",
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/smith/craft-3/CHANGELOG.md",
+        "class": "verbb\\smith\\Smith"
+    }
+}
