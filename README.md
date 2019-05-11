@@ -22,6 +22,11 @@ You can only paste from blocks that were copied from the same Matrix field. Howe
 ## Credit & Thanks
 A big shoutout to [Neo](https://github.com/spicywebau/craft-neo) for introducing copy/paste/clone functionality for their plugin, which this is obviously inspired by, and [Spoon](https://github.com/angell-co/Spoon).
 
+## Show your Support
+Knock Knock is licensed under the MIT license, meaning it will always be free and open source – we love free stuff! If you'd like to show your support to the plugin regardless, buy us a :beers:. Please note that this does not entitle you to any form of support, and is completely optional.
+
+[![Beerpay](https://beerpay.io/verbb/knock-knock/badge.svg?style=beer-square)](https://beerpay.io/verbb/knock-knock)
+
 <h2></h2>
 
 <a href="https://verbb.io" target="_blank">

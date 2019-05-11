@@ -17,7 +17,7 @@
         "docs": "https://github.com/verbb/smith",
         "rss": "https://github.com/verbb/smith/commits/v2.atom"
     },
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Verbb",
