@@ -9,6 +9,8 @@ use craft\log\FileTarget;
 
 use yii\log\Logger;
 
+use verbb\base\BaseHelper;
+
 trait PluginTrait
 {
     // Static Properties
@@ -25,6 +27,20 @@ trait PluginTrait
         return $this->get('field');
     }
 
+    public static function log($message)
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'smith');
+    }
+
+    public static function error($message)
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'smith');
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
     private function _setPluginComponents()
     {
         $this->setComponents([
@@ -38,16 +54,8 @@ trait PluginTrait
             'logFile' => Craft::getAlias('@storage/logs/smith.log'),
             'categories' => ['smith'],
         ]);
-    }
 
-    public static function log($message)
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'smith');
-    }
-
-    public static function error($message)
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'smith');
+        BaseHelper::registerModule();
     }
 
 }

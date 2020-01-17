@@ -29,7 +29,7 @@ Craft.Smith.Init = Garnish.Base.extend({
                 }
 
                 // Create a new class for this specific Matrix field and block
-                new Craft.Smith.Menu($matrixField, $matrixBlock, menuBtn);
+                new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn);
             }
         }
 
@@ -40,6 +40,7 @@ Craft.Smith.Init = Garnish.Base.extend({
     blockAdded: function(e) {
         Garnish.requestAnimationFrame($.proxy(function() {
             var $matrixField = e.target.$container;
+            var $matrixBlocks = $matrixField.find('> .blocks > .matrixblock');
             var $matrixBlock = $(e.$block);
 
             var $settingsBtn = $matrixBlock.find('.actions .settings.menubtn');
@@ -51,15 +52,16 @@ Craft.Smith.Init = Garnish.Base.extend({
                 return;
             }
 
-            new Craft.Smith.Menu($matrixField, $matrixBlock, menuBtn);
+            new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn);
         }, this));
     },
 });
 
 Craft.Smith.Menu = Garnish.Base.extend({
-    init: function($matrixField, $matrixBlock, menuBtn) {
+    init: function($matrixField, $matrixBlock, $matrixBlocks, menuBtn) {
         this.$matrixField = $matrixField;
         this.$matrixBlock = $matrixBlock;
+        this.$matrixBlocks = $matrixBlocks;
         this.menuBtn = menuBtn;
         this.menu = menuBtn.menu;
 
@@ -149,12 +151,25 @@ Craft.Smith.Menu = Garnish.Base.extend({
             }
 
             var $blockContainer = this.$matrixField.find('.blocks');
-            var $spinner = $('<div class="spinner smith-spinner"></div>').appendTo($blockContainer);
+            var $spinner = $('<div class="spinner smith-spinner"></div>').insertAfter(this.$matrixBlock);
 
             // Get the Matrix field JS instance
             var matrixField = this.$matrixField.data('matrix');
 
-            // Fetch the blocsks, rendered with values
+            // Figure out the next block, to instruct Matrix to insert before that one
+            var $insertBefore = null;
+
+            this.$matrixBlocks.each($.proxy(function(index, element) {
+                if (this.$matrixBlock.data('id') == $(element).data('id')) {
+                    var nextBlock = this.$matrixBlocks[index + 1];
+
+                    if (nextBlock) {
+                        return $insertBefore = $(nextBlock);
+                    }
+                }
+            }, this));
+
+            // Fetch the blocks, rendered with values
             Craft.postActionRequest('smith/field/render-matrix-blocks', data, $.proxy(function(response, textStatus) {
                 if (textStatus === 'success' && response.success) {
                     for (var i = 0; i < response.blocks.length; i++) {
@@ -167,7 +182,7 @@ Craft.Smith.Menu = Garnish.Base.extend({
                         matrixField.blockTypesByHandle[block.typeHandle] = block;
 
                         // Trigger the addBlock function - this adds a new block, so we're not duplicating code
-                        var $newBlock = matrixField.addBlock(block.typeHandle);
+                        var $newBlock = matrixField.addBlock(block.typeHandle, $insertBefore);
 
                         // Then, re-set back, so new blocks don't use copied content
                         matrixField.blockTypesByHandle[block.typeHandle] = originalBlock;
@@ -176,7 +191,7 @@ Craft.Smith.Menu = Garnish.Base.extend({
 
                 // Hide the spinner
                 $spinner.remove();
-            }));
+            }, this));
         } catch(e) { }
     },
 
@@ -208,8 +223,8 @@ Craft.Smith.Menu = Garnish.Base.extend({
             for (var fieldHandle in params.fields) {
                 data.field = fieldHandle;
 
-                for (var blockId in params.fields[fieldHandle]) {
-                    var block = params.fields[fieldHandle][blockId];
+                for (var blockId in params.fields[fieldHandle].blocks) {
+                    var block = params.fields[fieldHandle].blocks[blockId];
 
                     data.blocks.push(block);
                 }
