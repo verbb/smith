@@ -22,7 +22,7 @@ class Field extends Component
 
         // Set a temporary namespace for these
         $originalNamespace = $view->getNamespace();
-        $namespace = $view->namespaceInputName('fields[' . $field->handle . '][__BLOCK__][fields]', $originalNamespace);
+        $namespace = $view->namespaceInputName('fields[' . $field->handle . '][blocks][__BLOCK__][fields]', $originalNamespace);
         $view->setNamespace($namespace);
 
         $blockType = $block->getType();
