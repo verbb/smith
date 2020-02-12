@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 - 2020-02-12
+
+### Fixed
+- Fix issue with pasting blocks.
+
 ## 1.1.0 - 2020-02-11
 
 ### Added
