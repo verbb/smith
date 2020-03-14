@@ -13,28 +13,30 @@ if (typeof Craft.Smith === typeof undefined) {
 
 Craft.Smith.Init = Garnish.Base.extend({
     init: function(options) {
-        var $matrixFields = Garnish.$doc.find('.matrix-field');
+        Garnish.requestAnimationFrame($.proxy(function() {
+            var $matrixFields = Garnish.$doc.find('.matrix-field');
 
-        for (var i = 0; i < $matrixFields.length; i++) {
-            var $matrixField = $($matrixFields[i]);
-            var $matrixBlocks = $matrixField.find('> .blocks > .matrixblock');
+            for (var i = 0; i < $matrixFields.length; i++) {
+                var $matrixField = $($matrixFields[i]);
+                var $matrixBlocks = $matrixField.find('> .blocks > .matrixblock');
 
-            for (var j = 0; j < $matrixBlocks.length; j++) {
-                var $matrixBlock = $($matrixBlocks[j]);
-                var $settingsBtn = $matrixBlock.find('.actions .settings.menubtn');
-                var menuBtn = $settingsBtn.data('menubtn') || false;
+                for (var j = 0; j < $matrixBlocks.length; j++) {
+                    var $matrixBlock = $($matrixBlocks[j]);
+                    var $settingsBtn = $matrixBlock.find('.actions .settings.menubtn');
+                    var menuBtn = $settingsBtn.data('menubtn') || false;
 
-                if (!menuBtn) {
-                    return;
+                    if (!menuBtn) {
+                        return;
+                    }
+
+                    // Create a new class for this specific Matrix field and block
+                    new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn);
                 }
-
-                // Create a new class for this specific Matrix field and block
-                new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn);
             }
-        }
 
-        // Create a callback for new blocks
-        Garnish.on(Craft.MatrixInput, 'blockAdded', $.proxy(this, 'blockAdded'));
+            // Create a callback for new blocks
+            Garnish.on(Craft.MatrixInput, 'blockAdded', $.proxy(this, 'blockAdded'));
+        }, this));
     },
 
     blockAdded: function(e) {
@@ -201,6 +203,10 @@ Craft.Smith.Menu = Garnish.Base.extend({
         this.pasteBlock(e, data);
     },
 
+    _countInstances: function(string, word) {
+        return string.split(word).length - 1;
+    },
+
     _serializeBlocks: function() {
         var data = {
             field: '',
@@ -220,13 +226,39 @@ Craft.Smith.Menu = Garnish.Base.extend({
             var postData = Garnish.getPostData($blockItem);
             var params = Craft.expandPostArray(postData);
 
-            for (var fieldHandle in params.fields) {
-                data.field = fieldHandle;
+            // Handle nested (Neo)
+            var fields = params.fields;
+            var isNested = false;
 
-                for (var blockId in params.fields[fieldHandle].blocks) {
-                    var block = params.fields[fieldHandle].blocks[blockId];
+            for (var paramHandle in postData) {
+                if (this._countInstances(paramHandle, '[blocks]') > 1) {
+                    isNested = true;
+                }
+            }
 
-                    data.blocks.push(block);
+            if (isNested) {
+                for (var outerFieldHandle in fields) {
+                    for (var outerBlockId in fields[outerFieldHandle].blocks) {
+                        for (var fieldHandle in fields[outerFieldHandle].blocks[outerBlockId].fields) {
+                            data.field = fieldHandle;
+
+                            for (var blockId in fields[outerFieldHandle].blocks[outerBlockId].fields[fieldHandle].blocks) {
+                                var block = fields[outerFieldHandle].blocks[outerBlockId].fields[fieldHandle].blocks[blockId];
+
+                                data.blocks.push(block);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (var fieldHandle in fields) {
+                    data.field = fieldHandle;
+
+                    for (var blockId in fields[fieldHandle].blocks) {
+                        var block = fields[fieldHandle].blocks[blockId];
+
+                        data.blocks.push(block);
+                    }
                 }
             }
         }
