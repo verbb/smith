@@ -46,16 +46,13 @@ trait PluginTrait
         $this->setComponents([
             'field' => Field::class,
         ]);
+
+        BaseHelper::registerModule();
     }
 
     private function _setLogging()
     {
-        Craft::getLogger()->dispatcher->targets[] = new FileTarget([
-            'logFile' => Craft::getAlias('@storage/logs/smith.log'),
-            'categories' => ['smith'],
-        ]);
-
-        BaseHelper::registerModule();
+        BaseHelper::setFileLogging('smith');
     }
 
 }
