@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.4 - 2020-07-23
+
+### Fixed
+- Fix being unable to clone Matrix blocks when they contained a Super Table Field.
+- Fix being unable to clone Matrix blocks when in Neo fields.
+- Fix menu option not being added for Matrix blocks nested in Super Table or Neo fields.
+- Fix newly cloned blocks when nested in Super Table or Neo fields not cloning properly.
+- Fix Neo support to allow for nested Matrix fields more than 2 levels deep.
+
 ## 1.1.3 - 2020-04-16
 
 ### Fixed
