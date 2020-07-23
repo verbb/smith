@@ -36,6 +36,11 @@ Craft.Smith.Init = Garnish.Base.extend({
 
             // Create a callback for new blocks
             Garnish.on(Craft.MatrixInput, 'blockAdded', $.proxy(this, 'blockAdded'));
+
+            // Allow for Super Table's nested Matrix JS
+            if (Craft.SuperTable && Craft.SuperTable.MatrixInputAlt) {
+                Garnish.on(Craft.SuperTable.MatrixInputAlt, 'blockAdded', $.proxy(this, 'blockAdded'));
+            }
         }, this));
     },
 
@@ -203,13 +208,10 @@ Craft.Smith.Menu = Garnish.Base.extend({
         this.pasteBlock(e, data);
     },
 
-    _countInstances: function(string, word) {
-        return string.split(word).length - 1;
-    },
-
     _serializeBlocks: function() {
         var data = {
             field: '',
+            namespace: '',
             blocks: []
         };
 
@@ -224,44 +226,47 @@ Craft.Smith.Menu = Garnish.Base.extend({
             var $blockItem = $selectedItems[i];
 
             var postData = Garnish.getPostData($blockItem);
-            var params = Craft.expandPostArray(postData);
 
-            // Handle nested (Neo)
-            var fields = params.fields;
-            var isNested = false;
+            // Because we can have nested fields (ST > Matrix, Matrix > ST), we need to find the Matrix field.
+            // If there is more than one parent '.field' class, it means this Matrix field is being nested. We
+            // need to chop up the data sent to the controller to just be the Matrix data, not everything.
+            var levelsDeep = $blockItem.parents('.field').length;
+            var isNested = (levelsDeep > 1) ? true : false;
 
-            for (var paramHandle in postData) {
-                if (this._countInstances(paramHandle, '[blocks]') > 1) {
-                    isNested = true;
-                }
-            }
+            // console.log(isNested)
+            // console.log(postData)
 
             if (isNested) {
-                for (var outerFieldHandle in fields) {
-                    for (var outerBlockId in fields[outerFieldHandle].blocks) {
-                        for (var fieldHandle in fields[outerFieldHandle].blocks[outerBlockId].fields) {
-                            data.field = fieldHandle;
+                var parsedPostData = {};
 
-                            for (var blockId in fields[outerFieldHandle].blocks[outerBlockId].fields[fieldHandle].blocks) {
-                                var block = fields[outerFieldHandle].blocks[outerBlockId].fields[fieldHandle].blocks[blockId];
+                for (var paramHandle in postData) {
+                    var parsedHandle = paramHandle.replace(/^fields.+?(?<=fields])/mg, 'fields');
 
-                                data.blocks.push(block);
-                            }
-                        }
-                    }
+                    // Save the namespace for later;
+                    data.namespace = paramHandle.match(/^fields.+?(?<=fields])/mg)[0];
+
+                    parsedPostData[parsedHandle] = postData[paramHandle];
                 }
+
+                var params = Craft.expandPostArray(parsedPostData);
             } else {
-                for (var fieldHandle in fields) {
-                    data.field = fieldHandle;
+                var params = Craft.expandPostArray(postData);
+            }
 
-                    for (var blockId in fields[fieldHandle].blocks) {
-                        var block = fields[fieldHandle].blocks[blockId];
+            var fields = params.fields;
 
-                        data.blocks.push(block);
-                    }
+            for (var fieldHandle in fields) {
+                data.field = fieldHandle;
+
+                for (var blockId in fields[fieldHandle].blocks) {
+                    var block = fields[fieldHandle].blocks[blockId];
+
+                    data.blocks.push(block);
                 }
             }
         }
+
+        // console.log(data)
 
         return data;
     },
