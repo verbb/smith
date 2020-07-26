@@ -128,10 +128,10 @@ Craft.Smith.Menu = Garnish.Base.extend({
 
         try {
             var data = JSON.parse(localStorage.getItem('smith:block'));
-            var fieldHandle = this.$matrixField.attr('id').replace('fields-', '');
+            var fieldHandle = this.$matrixField.attr('id');
 
             // Find copy data for this field
-            if (data && data.field == fieldHandle) {
+            if (data && fieldHandle.includes('fields-' + data.field)) {
                 canPaste = true;
             }
         } catch(e) { }
@@ -238,9 +238,6 @@ Craft.Smith.Menu = Garnish.Base.extend({
             var levelsDeep = $blockItem.parents('.field').length;
             var isNested = (levelsDeep > 1) ? true : false;
 
-            // console.log(isNested)
-            // console.log(postData)
-
             if (isNested) {
                 var parsedPostData = {};
 
@@ -270,8 +267,6 @@ Craft.Smith.Menu = Garnish.Base.extend({
                 }
             }
         }
-
-        // console.log(data)
 
         return data;
     },
