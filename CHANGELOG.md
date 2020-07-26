@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.5 - 2020-07-26
+
+### Fixed
+- Fix paste-checks not being done each time the menu is opened. Causing previously-copied blocks (from other fields) to show they can be pasted.
+- Fix being unable to post for Super Table in Matrix fields.
+- Fix JS error in Safari
+
 ## 1.1.4 - 2020-07-23
 
 ### Fixed
