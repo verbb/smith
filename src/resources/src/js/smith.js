@@ -242,10 +242,11 @@ Craft.Smith.Menu = Garnish.Base.extend({
                 var parsedPostData = {};
 
                 for (var paramHandle in postData) {
-                    var parsedHandle = paramHandle.replace(/^fields.+?(?<=fields])/mg, 'fields');
+                    console.log(paramHandle)
+                    var parsedHandle = paramHandle.replace(/^fields.+?(fields])/mg, 'fields');
 
                     // Save the namespace for later;
-                    data.namespace = paramHandle.match(/^fields.+?(?<=fields])/mg)[0];
+                    data.namespace = paramHandle.match(/^fields.+?(fields])/mg)[0];
 
                     parsedPostData[parsedHandle] = postData[paramHandle];
                 }
