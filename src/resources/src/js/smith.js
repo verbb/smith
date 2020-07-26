@@ -93,8 +93,13 @@ Craft.Smith.Menu = Garnish.Base.extend({
 
         // Hook into all menu items
         this.menu.on('optionselect', $.proxy(this, 'onOptionSelect'));
+        this.menu.on('show', $.proxy(this, 'onMenuShow'));
 
         // Perform some checks
+        this.checkPaste();
+    },
+
+    onMenuShow: function(e) {
         this.checkPaste();
     },
 
