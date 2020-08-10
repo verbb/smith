@@ -223,6 +223,8 @@ Craft.Smith.Menu = Garnish.Base.extend({
         var matrixField = this.$matrixField.data('matrix');
         var $selectedItems = matrixField.blockSelect.$selectedItems;
 
+        data.placeholderKey = matrixField.settings.placeholderKey;
+
         if (!$selectedItems.length) {
             $selectedItems = [this.$matrixBlock];
         }

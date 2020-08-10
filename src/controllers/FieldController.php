@@ -27,6 +27,7 @@ class FieldController extends Controller
         $fieldHandle = $request->getParam('field');
         $blocks = $request->getParam('blocks');
         $namespace = $request->getParam('namespace');
+        $placeholderKey = $request->getParam('placeholderKey');
 
         // Allow blocks to send through a namespace, so we can render them properly in-context
         // Mostly for when the Matrix field is nested in another field.
@@ -59,7 +60,7 @@ class FieldController extends Controller
                 $block->setFieldValues($blockData['fields']);
             }
 
-            $blockInfo = Smith::$plugin->field->renderMatrixBlock($namespace, $field, $block);
+            $blockInfo = Smith::$plugin->field->renderMatrixBlock($namespace, $field, $block, $placeholderKey);
 
             $renderedBlocks[] = [
                 'typeId' => $blockType->id,
