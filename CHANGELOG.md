@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.6 - 2020-08-10
+
+### Changed
+- Updated handling to cater for the latest changes in Matrix and Super Table, with `placeholderKey`.
+- Now requires Craft 3.4.30+.
+
 ## 1.1.5 - 2020-07-26
 
 ### Fixed
