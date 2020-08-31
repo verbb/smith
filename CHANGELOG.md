@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.7 - 2020-08-31
+
+### Fixed
+- Fix error when selecting one or multiple blocks and trying to copy.
+
 ## 1.1.6 - 2020-08-10
 
 ### Changed
