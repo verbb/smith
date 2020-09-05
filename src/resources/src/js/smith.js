@@ -181,6 +181,10 @@ Craft.Smith.Menu = Garnish.Base.extend({
                 }
             }, this));
 
+            // Have to replace the placeholderKey from the copied matrix. Very likely its been copied on one
+            // field, and pasted on another so that placeholderKey will be different.
+            data.placeholderKey = matrixField.settings.placeholderKey;
+
             // Fetch the blocks, rendered with values
             Craft.postActionRequest('smith/field/render-matrix-blocks', data, $.proxy(function(response, textStatus) {
                 if (textStatus === 'success' && response.success) {
