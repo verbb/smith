@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.8 - 2020-09-05
+
+### Fixed
+- Fix pasting into new matrix fields, not using the correct `placeholderKey` for the destination field.
+
 ## 1.1.7 - 2020-08-31
 
 ### Fixed
