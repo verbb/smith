@@ -5,6 +5,7 @@ use verbb\smith\Smith;
 
 use Craft;
 use craft\elements\MatrixBlock;
+use craft\helpers\Json;
 use craft\helpers\ArrayHelper;
 use craft\web\Controller;
 
@@ -46,6 +47,9 @@ class FieldController extends Controller
             $blockType = $blockTypes[$blockData['type']] ?? null;
 
             if (!$blockType) {
+                Smith::error("Unable to find Block Type for “{$blockData['type']}” for field “{$field->id}”.");
+                Smith::error(Json::encode($blockTypes));
+
                 continue;
             }
             
