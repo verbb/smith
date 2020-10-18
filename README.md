@@ -23,9 +23,8 @@ You can only paste from blocks that were copied from the same Matrix field. Howe
 A big shoutout to [Neo](https://github.com/spicywebau/craft-neo) for introducing copy/paste/clone functionality for their plugin, which this is obviously inspired by, and [Spoon](https://github.com/angell-co/Spoon).
 
 ## Show your Support
-Smith is licensed under the MIT license, meaning it will always be free and open source – we love free stuff! If you'd like to show your support to the plugin regardless, buy us a :beers:. Please note that this does not entitle you to any form of support, and is completely optional.
 
-[![Beerpay](https://beerpay.io/verbb/smith/badge.svg?style=beer-square)](https://beerpay.io/verbb/smith)
+Smith is licensed under the MIT license, meaning it will always be free and open source – we love free stuff! If you'd like to show your support to the plugin regardless, [Sponsor](https://github.com/sponsors/verbb) development.
 
 <h2></h2>
 
