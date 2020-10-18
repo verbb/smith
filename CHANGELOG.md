@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.9 - 2020-10-18
+
+### Fixed
+- Fix nested Matrix + Super Table fields, where excessively large POST data was being sent to the server.
+
 ## 1.1.8 - 2020-09-05
 
 ### Fixed
