@@ -275,8 +275,49 @@ Craft.Smith.Menu = Garnish.Base.extend({
             }
         }
 
+        // Cleanup nested block data. Massive pain, but seems related to delta updates.
+        // Basically helps to prevent heaps of empty data sent to the server.
+        data = this.filterBlocks(data);
+
         return data;
     },
+
+    filterBlocks: function(object) {
+        var self = this;
+
+        if (object.blocks) {
+            object.blocks = object.blocks.filter(function(el) {
+                return el != null;
+            });
+
+            // Fix the sort order too, won't work otherwise.
+            if (object.sortOrder) {
+                var sortOrder = [];
+
+                for (var i = 0; i < object.blocks.length; i++) {
+                    sortOrder.push(i)
+                }
+
+                object.sortOrder = sortOrder;
+            }
+        }
+
+        Object.keys(object).forEach(function(index) {
+            var item  = object[index];
+
+            if (Array.isArray()) {
+                for (var i = 0; i < item.length; i++) {
+                    self.filterBlocks(item[i]);
+                }
+            }
+
+            if (typeof item === 'object') {
+                self.filterBlocks(item);
+            }
+        });
+        
+        return object;
+    }
 
 });
 
