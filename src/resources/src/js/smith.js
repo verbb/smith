@@ -248,7 +248,6 @@ Craft.Smith.Menu = Garnish.Base.extend({
                 var parsedPostData = {};
 
                 for (var paramHandle in postData) {
-                    console.log(paramHandle)
                     var parsedHandle = paramHandle.replace(/^fields.+?(fields])/mg, 'fields');
 
                     // Save the namespace for later;
@@ -269,6 +268,9 @@ Craft.Smith.Menu = Garnish.Base.extend({
 
                 for (var blockId in fields[fieldHandle].blocks) {
                     var block = fields[fieldHandle].blocks[blockId];
+
+                    // Save the block ID for later
+                    block.blockId = $blockItem.data('id');
 
                     data.blocks.push(block);
                 }

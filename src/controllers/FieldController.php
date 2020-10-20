@@ -36,19 +36,32 @@ class FieldController extends Controller
             $namespace = 'fields';
         }
 
-        // Special handling here. The Matrix field might be nested. We have to use this function in order
-        // to find all fields, regardless of context
-        $field = ArrayHelper::firstWhere(Craft::$app->fields->getAllFields(false), 'handle', $fieldHandle, true);
-
-        $blockTypes = Craft::$app->matrix->getBlockTypesByFieldId($field->id) ?? [];
-        $blockTypes = ArrayHelper::index($blockTypes, 'handle');
-
         foreach ($blocks as $blockData) {
-            $blockType = $blockTypes[$blockData['type']] ?? null;
+            // Fetch the field from the block element used. A reliable way to deal with nested fields
+            $blockId = $blockData['blockId'] ?? '';
 
-            if (!$blockType) {
-                Smith::error("Unable to find Block Type for “{$blockData['type']}” for field “{$field->id}”.");
-                Smith::error(Json::encode($blockTypes));
+            if (!$blockId) {
+                Smith::error("Missing blockId from request.");
+                Smith::error(Json::encode($blockData));
+
+                continue;
+            }
+
+            $blockElement = MatrixBlock::find()->id($blockId)->one();
+
+            if (!$blockElement) {
+                Smith::error("Unable to find block for {$blockId}.");
+                Smith::error(Json::encode($blockData));
+
+                continue;
+            }
+
+            $field = Craft::$app->getFields()->getFieldById($blockElement->fieldId);
+            $blockType = $blockElement->getType();
+
+            if (!$field) {
+                Smith::error("Unable to find field for “{$blockElement->fieldId}”.");
+                Smith::error(Json::encode($blockData));
 
                 continue;
             }
