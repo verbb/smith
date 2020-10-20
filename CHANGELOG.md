@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.10 - 2020-10-21
+
+### Fixed
+- Fix error when cloning or pasting blocks where multiple Matrix fields with the same handle existed.
+
 ## 1.1.9 - 2020-10-18
 
 ### Fixed
