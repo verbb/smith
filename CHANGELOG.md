@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.11 - 2021-01-15
+
+### Fixed
+- Fix being unable to clone or copy/paste unsaved blocks.
+
 ## 1.1.10 - 2020-10-21
 
 ### Fixed
