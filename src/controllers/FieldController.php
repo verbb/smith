@@ -5,8 +5,8 @@ use verbb\smith\Smith;
 
 use Craft;
 use craft\elements\MatrixBlock;
-use craft\helpers\Json;
 use craft\helpers\ArrayHelper;
+use craft\helpers\Json;
 use craft\web\Controller;
 
 use yii\web\Response;
@@ -39,6 +39,7 @@ class FieldController extends Controller
         foreach ($blocks as $blockData) {
             // Fetch the field from the block element used. A reliable way to deal with nested fields
             $blockId = $blockData['blockId'] ?? '';
+            $blockTypeHandle = $blockData['type'] ?? '';
 
             if (!$blockId) {
                 Smith::error("Missing blockId from request.");
@@ -47,25 +48,40 @@ class FieldController extends Controller
                 continue;
             }
 
-            $blockElement = MatrixBlock::find()->id($blockId)->one();
+            // Try to find a saved block to get data from
+            if ($blockElement = MatrixBlock::find()->id($blockId)->one()) {
+                $field = Craft::$app->getFields()->getFieldById($blockElement->fieldId);
+                $blockType = $blockElement->getType();
 
-            if (!$blockElement) {
-                Smith::error("Unable to find block for {$blockId}.");
-                Smith::error(Json::encode($blockData));
+                if (!$field) {
+                    Smith::error("Unable to find field for “{$blockElement->fieldId}”.");
+                    Smith::error(Json::encode($blockData));
 
-                continue;
+                    continue;
+                }
+            } else {
+                // This might've been a newly-created block, not yet saved. Not foolproof (when dealing with
+                // nested fields like Neo/ST), but at least handles base Matrix setups.
+                $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+
+                if (!$field) {
+                    Smith::error("Unable to find field for “{$fieldHandle}”.");
+                    Smith::error(Json::encode($blockData));
+
+                    continue;
+                }
+
+                $blockTypes = Craft::$app->getMatrix()->getBlockTypesByFieldId($field->id);
+                $blockType = ArrayHelper::firstWhere($blockTypes, 'handle', $blockTypeHandle);
+
+                if (!$blockType) {
+                    Smith::error("Unable to find block type for “{$blockTypeHandle}”.");
+                    Smith::error(Json::encode($blockData));
+
+                    continue;
+                }
             }
 
-            $field = Craft::$app->getFields()->getFieldById($blockElement->fieldId);
-            $blockType = $blockElement->getType();
-
-            if (!$field) {
-                Smith::error("Unable to find field for “{$blockElement->fieldId}”.");
-                Smith::error(Json::encode($blockData));
-
-                continue;
-            }
-            
             $block = new MatrixBlock();
             $block->fieldId = $field->id;
             $block->typeId = $blockType->id;
