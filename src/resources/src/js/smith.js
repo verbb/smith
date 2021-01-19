@@ -12,6 +12,8 @@ if (typeof Craft.Smith === typeof undefined) {
 (function($) {
 
 Craft.Smith.Init = Garnish.Base.extend({
+    smithMenus: [],
+
     init: function(options) {
         Garnish.requestAnimationFrame($.proxy(function() {
             var $matrixFields = Garnish.$doc.find('.matrix-field');
@@ -30,7 +32,7 @@ Craft.Smith.Init = Garnish.Base.extend({
                     }
 
                     // Create a new class for this specific Matrix field and block
-                    new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn);
+                    this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn));
                 }
             }
 
@@ -59,7 +61,13 @@ Craft.Smith.Init = Garnish.Base.extend({
                 return;
             }
 
-            new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn);
+            // Update all Smith menus' with the correct matrix blocks
+            $.each(this.smithMenus, function(index, menu) {
+                menu.$matrixBlocks = $matrixBlocks;
+            });
+
+            // Create a new Smith menu class for the new block
+            this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn));
         }, this));
     },
 });
