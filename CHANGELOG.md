@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.12 - 2021-01-19
+
+### Fixed
+- Fix cloned blocks on un-saved elements not always appearing after cloned source block.
+- Fix potentially incorrect blocks being cloned.
+
 ## 1.1.11 - 2021-01-15
 
 ### Fixed
