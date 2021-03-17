@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.13 - 2021-03-17
+
+### Fixed
+- Fix translations not working.
+
 ## 1.1.12 - 2021-01-19
 
 ### Fixed
