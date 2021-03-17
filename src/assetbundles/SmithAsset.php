@@ -5,6 +5,7 @@ use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 use craft\web\assets\matrix\MatrixAsset;
+use craft\web\View;
 
 use verbb\base\assetbundles\CpAsset as VerbbCpAsset;
 
@@ -32,5 +33,20 @@ class SmithAsset extends AssetBundle
         ];
 
         parent::init();
+    }
+
+    public function registerAssetFiles($view)
+    {
+        parent::registerAssetFiles($view);
+
+        if ($view instanceof View) {
+            $view->registerTranslations('app', [
+                'Copy',
+                'Paste',
+                'Clone',
+                '1 block copied',
+                '{n} blocks copied',
+            ]);
+        }
     }
 }
