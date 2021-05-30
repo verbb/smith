@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.14 - 2021-05-30
+
+### Fixed
+- Fix cloned or pasted block not always appearing in some instances.
+- Fix incorrectly rendering Matrix blocks for Craft 3.5+.
+
 ## 1.1.13 - 2021-03-17
 
 ### Fixed
