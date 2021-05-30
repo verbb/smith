@@ -177,17 +177,7 @@ Craft.Smith.Menu = Garnish.Base.extend({
             var matrixField = this.$matrixField.data('matrix');
 
             // Figure out the next block, to instruct Matrix to insert before that one
-            var $insertBefore = null;
-
-            this.$matrixBlocks.each($.proxy(function(index, element) {
-                if (this.$matrixBlock.data('id') == $(element).data('id')) {
-                    var nextBlock = this.$matrixBlocks[index + 1];
-
-                    if (nextBlock) {
-                        return $insertBefore = $(nextBlock);
-                    }
-                }
-            }, this));
+            var $insertBefore = $spinner;
 
             // Have to replace the placeholderKey from the copied matrix. Very likely its been copied on one
             // field, and pasted on another so that placeholderKey will be different.
