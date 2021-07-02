@@ -285,7 +285,7 @@ Craft.Smith.Menu = Garnish.Base.extend({
     filterBlocks: function(object) {
         var self = this;
 
-        if (object.blocks) {
+        if (object.blocks && Array.isArray(object.blocks)) {
             object.blocks = object.blocks.filter(function(el) {
                 return el != null;
             });
