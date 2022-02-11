@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 - 2022-01-11
+
+### Changed
+- Now require Craft 3.7.31+.
+
+### Fixed
+- Fix compatibility with Craft 3.7.31.
+- Fix potential error with MatrixMate and cloning blocks.
+
 ## 1.1.14 - 2021-05-30
 
 ### Fixed
