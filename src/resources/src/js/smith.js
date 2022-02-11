@@ -25,14 +25,9 @@ Craft.Smith.Init = Garnish.Base.extend({
                 for (var j = 0; j < $matrixBlocks.length; j++) {
                     var $matrixBlock = $($matrixBlocks[j]);
                     var $settingsBtn = $matrixBlock.find('.actions .settings.menubtn');
-                    var menuBtn = $settingsBtn.data('menubtn') || false;
-
-                    if (!menuBtn) {
-                        return;
-                    }
 
                     // Create a new class for this specific Matrix field and block
-                    this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn));
+                    this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks));
                 }
             }
 
@@ -52,11 +47,10 @@ Craft.Smith.Init = Garnish.Base.extend({
             var $matrixBlocks = $matrixField.find('> .blocks > .matrixblock');
             var $matrixBlock = $(e.$block);
 
-            var $settingsBtn = $matrixBlock.find('.actions .settings.menubtn');
-            var menuBtn = $settingsBtn.data('menubtn') || false;
+            var blockInstance = $matrixBlock.data('block');
 
             // Try again if the menu button isn't initialised yet
-            if (!menuBtn) {
+            if (!blockInstance) {
                 this.blockAdded(e);
                 return;
             }
@@ -67,21 +61,21 @@ Craft.Smith.Init = Garnish.Base.extend({
             });
 
             // Create a new Smith menu class for the new block
-            this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks, menuBtn));
+            this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks));
         }, this));
     },
 });
 
 Craft.Smith.Menu = Garnish.Base.extend({
-    init: function($matrixField, $matrixBlock, $matrixBlocks, menuBtn) {
+    init: function($matrixField, $matrixBlock, $matrixBlocks) {
         this.$matrixField = $matrixField;
         this.$matrixBlock = $matrixBlock;
         this.$matrixBlocks = $matrixBlocks;
-        this.menuBtn = menuBtn;
-        this.menu = menuBtn.menu;
+
+        this.blockInstance = this.$matrixBlock.data('block');
 
         // Keep track of the delete option - we want to insert before that
-        var $deleteOption = this.menu.$container.find('a[data-action="delete"]').parents('li');
+        var $deleteOption = this.blockInstance.$actionMenu.find('a[data-action="delete"]').parents('li');
 
         // Create our buttons
         this.$copyBtn = $('<a data-icon="copy" data-action="copy">' + Craft.t('app', 'Copy') + '</a>');
@@ -94,25 +88,16 @@ Craft.Smith.Menu = Garnish.Base.extend({
         this.$cloneBtn.insertBefore($deleteOption).wrap('<li/>');
         $('<hr class="padded">').insertBefore($deleteOption);
 
-        // Add new menu items to the menu
-        this.menu.addOptions(this.$copyBtn);
-        this.menu.addOptions(this.$pasteBtn);
-        this.menu.addOptions(this.$cloneBtn);
-
-        // Hook into all menu items
-        this.menu.on('optionselect', $.proxy(this, 'onOptionSelect'));
-        this.menu.on('show', $.proxy(this, 'onMenuShow'));
+        this.addListener(this.$copyBtn, 'click', this.handleClick);
+        this.addListener(this.$pasteBtn, 'click', this.handleClick);
+        this.addListener(this.$cloneBtn, 'click', this.handleClick);
 
         // Perform some checks
         this.checkPaste();
     },
 
-    onMenuShow: function(e) {
-        this.checkPaste();
-    },
-
-    onOptionSelect: function(e) {
-        var $option = $(e.selectedOption);
+    handleClick: function(e) {
+        var $option = $(e.target);
 
         if ($option.hasClass('disabled') || $option.hasClass('sel')) {
             return;
@@ -129,7 +114,10 @@ Craft.Smith.Menu = Garnish.Base.extend({
         if ($option.data('action') == 'clone') {
             this.cloneBlock(e);
         }
+
+        this.blockInstance.actionDisclosure.hide();
     },
+
 
     checkPaste: function() {
         var canPaste = false;
