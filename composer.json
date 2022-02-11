@@ -25,7 +25,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.4.30",
+        "craftcms/cms": "^3.7.31",
         "verbb/base": "^1.0.2"
     },
     "autoload": {
