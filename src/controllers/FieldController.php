@@ -16,7 +16,7 @@ class FieldController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionRenderMatrixBlocks()
+    public function actionRenderMatrixBlocks(): Response
     {
         $this->requireAcceptsJson();
         $this->requirePostRequest();
@@ -54,7 +54,7 @@ class FieldController extends Controller
                 $blockType = $blockElement->getType();
 
                 if (!$field) {
-                    Smith::error("Unable to find field for “{$blockElement->fieldId}”.");
+                    Smith::error(sprintf('Unable to find field for “%s”.', $blockElement->fieldId));
                     Smith::error(Json::encode($blockData));
 
                     continue;
@@ -65,7 +65,7 @@ class FieldController extends Controller
                 $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
 
                 if (!$field) {
-                    Smith::error("Unable to find field for “{$fieldHandle}”.");
+                    Smith::error(sprintf('Unable to find field for “%s”.', $fieldHandle));
                     Smith::error(Json::encode($blockData));
 
                     continue;
@@ -75,7 +75,7 @@ class FieldController extends Controller
                 $blockType = ArrayHelper::firstWhere($blockTypes, 'handle', $blockTypeHandle);
 
                 if (!$blockType) {
-                    Smith::error("Unable to find block type for “{$blockTypeHandle}”.");
+                    Smith::error(sprintf('Unable to find block type for “%s”.', $blockTypeHandle));
                     Smith::error(Json::encode($blockData));
 
                     continue;

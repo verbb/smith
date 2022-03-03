@@ -18,15 +18,15 @@ class Field extends Component
 {
     // Public Methods
     // =========================================================================
-
-    public function renderMatrixBlock($fieldNamespace, $field, $block, $placeholderKey = '1')
+    /**
+     * @return array<string, mixed>
+     */
+    public function renderMatrixBlock($fieldNamespace, $field, $block, $placeholderKey = '1'): array
     {
-        $blockTypeInfo = [];
-
         // Set a temporary namespace for these
         $view = Craft::$app->getView();
         $originalNamespace = $view->getNamespace();
-        $namespace = $view->namespaceInputName("{$fieldNamespace}[{$field->handle}][blocks][__BLOCK_{$placeholderKey}__]", $originalNamespace);
+        $namespace = $view->namespaceInputName(sprintf('%s[%s][blocks][__BLOCK_%s__]', $fieldNamespace, $field->handle, $placeholderKey), $originalNamespace);
         $view->setNamespace($namespace);
 
         $blockType = $block->getType();

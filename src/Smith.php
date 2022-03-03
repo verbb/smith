@@ -5,6 +5,7 @@ use verbb\smith\assetbundles\SmithAsset;
 use verbb\smith\base\PluginTrait;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
 use craft\services\Plugins;
@@ -17,7 +18,7 @@ class Smith extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '1.0.0';
+    public string $schemaVersion = '1.0.0';
 
 
     // Traits
@@ -29,7 +30,7 @@ class Smith extends Plugin
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -39,8 +40,8 @@ class Smith extends Plugin
         $this->_setLogging();
 
         Event::on(Plugins::class, Plugins::EVENT_AFTER_LOAD_PLUGINS, function() {
-            if ($this->isInstalled && !Craft::$app->plugins->doesPluginRequireDatabaseUpdate($this)) {
-                if (!Craft::$app->request->isCpRequest || Craft::$app->request->getAcceptsJson()) {
+            if ($this->isInstalled && !Craft::$app->getPlugins()->isPluginUpdatePending($this)) {
+                if (!Craft::$app->getRequest()->getIsCpRequest() || Craft::$app->getRequest()->getAcceptsJson()) {
                     return;
                 }
 

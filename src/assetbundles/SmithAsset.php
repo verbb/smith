@@ -14,7 +14,7 @@ class SmithAsset extends AssetBundle
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = "@verbb/smith/resources/dist";
 
@@ -35,7 +35,7 @@ class SmithAsset extends AssetBundle
         parent::init();
     }
 
-    public function registerAssetFiles($view)
+    public function registerAssetFiles($view): void
     {
         parent::registerAssetFiles($view);
 
