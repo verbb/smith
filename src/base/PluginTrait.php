@@ -12,19 +12,14 @@ use verbb\base\BaseHelper;
 
 trait PluginTrait
 {
-    // Static Properties
+    // Properties
     // =========================================================================
 
     public static Smith $plugin;
 
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
-
-    public function getField(): Field
-    {
-        return $this->get('field');
-    }
 
     public static function log($message): void
     {
@@ -34,6 +29,15 @@ trait PluginTrait
     public static function error($message): void
     {
         Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'smith');
+    }
+
+
+    // Public Methods
+    // =========================================================================
+
+    public function getField(): Field
+    {
+        return $this->get('field');
     }
 
 

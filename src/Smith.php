@@ -5,17 +5,14 @@ use verbb\smith\assetbundles\SmithAsset;
 use verbb\smith\base\PluginTrait;
 
 use Craft;
-use craft\base\Model;
 use craft\base\Plugin;
-use craft\events\RegisterUrlRulesEvent;
 use craft\services\Plugins;
-use craft\web\UrlManager;
 
 use yii\base\Event;
 
 class Smith extends Plugin
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
     public string $schemaVersion = '1.0.0';

@@ -54,7 +54,7 @@ class FieldController extends Controller
                 $blockType = $blockElement->getType();
 
                 if (!$field) {
-                    Smith::error(sprintf('Unable to find field for “%s”.', $blockElement->fieldId));
+                    Smith::error("Unable to find field for “{$blockElement->fieldId}”.");
                     Smith::error(Json::encode($blockData));
 
                     continue;
@@ -65,7 +65,7 @@ class FieldController extends Controller
                 $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
 
                 if (!$field) {
-                    Smith::error(sprintf('Unable to find field for “%s”.', $fieldHandle));
+                    Smith::error("Unable to find field for “{$fieldHandle}”.");
                     Smith::error(Json::encode($blockData));
 
                     continue;
@@ -75,7 +75,7 @@ class FieldController extends Controller
                 $blockType = ArrayHelper::firstWhere($blockTypes, 'handle', $blockTypeHandle);
 
                 if (!$blockType) {
-                    Smith::error(sprintf('Unable to find block type for “%s”.', $blockTypeHandle));
+                    Smith::error("Unable to find block type for “{$blockTypeHandle}”.");
                     Smith::error(Json::encode($blockData));
 
                     continue;
@@ -93,7 +93,7 @@ class FieldController extends Controller
                 $block->setFieldValues($blockData['fields']);
             }
 
-            $blockInfo = Smith::$plugin->field->renderMatrixBlock($namespace, $field, $block, $placeholderKey);
+            $blockInfo = Smith::$plugin->getField()->renderMatrixBlock($namespace, $field, $block, $placeholderKey);
 
             $renderedBlocks[] = [
                 'typeId' => $blockType->id,

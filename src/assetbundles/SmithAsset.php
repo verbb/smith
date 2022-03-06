@@ -1,7 +1,6 @@
 <?php
 namespace verbb\smith\assetbundles;
 
-use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 use craft\web\assets\matrix\MatrixAsset;
@@ -21,7 +20,7 @@ class SmithAsset extends AssetBundle
         $this->depends = [
             VerbbCpAsset::class,
             CpAsset::class,
-            MatrixAsset::class
+            MatrixAsset::class,
         ];
 
         $this->js = [

@@ -1,23 +1,16 @@
 <?php
 namespace verbb\smith\services;
 
-use verbb\smith\Smith;
-
 use Craft;
 use craft\base\Component;
-use craft\elements\MatrixBlock;
 use craft\fieldlayoutelements\CustomField;
-use craft\helpers\ArrayHelper;
 use craft\models\FieldLayoutTab;
-
-use verbb\supertable\fields\SuperTableField;
-
-use DateTime;
 
 class Field extends Component
 {
     // Public Methods
     // =========================================================================
+    
     /**
      * @return array<string, mixed>
      */
@@ -26,7 +19,7 @@ class Field extends Component
         // Set a temporary namespace for these
         $view = Craft::$app->getView();
         $originalNamespace = $view->getNamespace();
-        $namespace = $view->namespaceInputName(sprintf('%s[%s][blocks][__BLOCK_%s__]', $fieldNamespace, $field->handle, $placeholderKey), $originalNamespace);
+        $namespace = $view->namespaceInputName("{$fieldNamespace}[{$field->handle}][blocks][__BLOCK_{$placeholderKey}__]", $originalNamespace);
         $view->setNamespace($namespace);
 
         $blockType = $block->getType();
