@@ -26,6 +26,13 @@ Craft.Smith.Init = Garnish.Base.extend({
                     var $matrixBlock = $($matrixBlocks[j]);
                     var $settingsBtn = $matrixBlock.find('.actions .settings.menubtn');
 
+                    // Don't do this for static blocks
+                    if ($matrixBlock.hasClass('static')) {
+                        continue;
+                    }
+
+                    console.log($matrixBlock)
+
                     // Create a new class for this specific Matrix field and block
                     this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks));
                 }
@@ -59,6 +66,11 @@ Craft.Smith.Init = Garnish.Base.extend({
             $.each(this.smithMenus, function(index, menu) {
                 menu.$matrixBlocks = $matrixBlocks;
             });
+
+            // Don't do this for static blocks
+            if ($matrixBlock.hasClass('static')) {
+                continue;
+            }
 
             // Create a new Smith menu class for the new block
             this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks));
