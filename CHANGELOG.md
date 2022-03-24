@@ -1,9 +1,14 @@
 # Changelog
 
+## 1.2.1 - 2022-03-24
+
+### Fixed
+- Fix an error when viewing a revision for an entry/element.
+
 ## 1.2.0 - 2022-01-11
 
 ### Changed
-- Now require Craft 3.7.31+.
+- Now requires Craft 3.7.31+.
 
 ### Fixed
 - Fix compatibility with Craft 3.7.31.
