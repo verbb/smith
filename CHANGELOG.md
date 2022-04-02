@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 - 2022-04-02
+
+### Fixed
+- Fix un-saved Super Table and Matrix combinations not being able to be cloned.
+
 ## 1.2.1 - 2022-03-24
 
 ### Fixed
