@@ -62,7 +62,7 @@ class FieldController extends Controller
             } else {
                 // This might've been a newly-created block, not yet saved. Not foolproof (when dealing with
                 // nested fields like Neo/ST), but at least handles base Matrix setups.
-                $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+                $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle, false);
 
                 if (!$field) {
                     Smith::error("Unable to find field for “{$fieldHandle}”.");

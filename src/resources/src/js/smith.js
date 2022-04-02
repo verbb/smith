@@ -31,8 +31,6 @@ Craft.Smith.Init = Garnish.Base.extend({
                         continue;
                     }
 
-                    console.log($matrixBlock)
-
                     // Create a new class for this specific Matrix field and block
                     this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks));
                 }
@@ -69,7 +67,7 @@ Craft.Smith.Init = Garnish.Base.extend({
 
             // Don't do this for static blocks
             if ($matrixBlock.hasClass('static')) {
-                continue;
+                return;
             }
 
             // Create a new Smith menu class for the new block
