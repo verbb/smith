@@ -234,28 +234,33 @@ Craft.Smith.Menu = Garnish.Base.extend({
 
             var postData = Garnish.getPostData($blockItem);
 
-            // Because we can have nested fields (ST > Matrix, Matrix > ST), we need to find the Matrix field.
-            // If there is more than one parent '.field' class, it means this Matrix field is being nested. We
-            // need to chop up the data sent to the controller to just be the Matrix data, not everything.
-            var levelsDeep = $blockItem.parents('.field').length;
-            var isNested = (levelsDeep > 1) ? true : false;
+            // In order to deal with nested fields (ST > Matrix, Matrix > ST, Matrix > ST > Matrix), we need to
+            // splice up the post data to just contain values for _this_ Matrix block, rather than them
+            // namespaced to the top-level field.
+            var parsedPostData = {};
 
-            if (isNested) {
-                var parsedPostData = {};
+            for (var paramHandle in postData) {
+                var paramValue = postData[paramHandle];
 
-                for (var paramHandle in postData) {
-                    var parsedHandle = paramHandle.replace(/^fields.+?(fields])/mg, 'fields');
+                // This will be `fields[matrixField]` where `matrixField` will be **this** field.
+                // Factoring in nested fields and all that. We want this to help extract POST data
+                // just for this block.
+                var fieldNamespace = matrixField.inputNamePrefix.replace(/(^fields).*(\[.+\])/, '$1$2');
 
-                    // Save the namespace for later;
-                    data.namespace = paramHandle.match(/^fields.+?(fields])/mg)[0];
+                // Get the namespace for the block, including any nested names. We use this to generate
+                // the correct name inputs for the new fields. Will either be blank for solo Matrix
+                // Or as complex as `fields[field][blocks][id][fields][field][blocks][id][fields]`
+                data.namespace = matrixField.inputNamePrefix.match(/fields.*\[fields\]/)?.[0] || '';
 
-                    parsedPostData[parsedHandle] = postData[paramHandle];
-                }
+                // Remove everything up to the last `[fields][matrixField][blocks]` pattern to deal
+                // with (ST > Matrix, Matrix > ST, Matrix > ST > Matrix) combos. Be sure to prepend
+                // `fields[matrixField]` to fetch POST data correctly, scoped to this block.
+                paramHandle = fieldNamespace + paramHandle.replace(matrixField.inputNamePrefix, '');
 
-                var params = Craft.expandPostArray(parsedPostData);
-            } else {
-                var params = Craft.expandPostArray(postData);
+                parsedPostData[paramHandle] = paramValue;
             }
+
+            var params = Craft.expandPostArray(parsedPostData);
 
             var fields = params.fields;
 
