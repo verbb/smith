@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.3 - 2022-04-04
+
+### Fixed
+- Add support for cloning complex Matrix fields, when nested in Super Table fields.
+
 ## 1.2.2 - 2022-04-02
 
 ### Fixed
