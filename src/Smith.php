@@ -33,8 +33,8 @@ class Smith extends Plugin
 
         self::$plugin = $this;
 
-        $this->_setPluginComponents();
-        $this->_setLogging();
+        $this->_registerComponents();
+        $this->_registerLogTarget();
 
         Event::on(Plugins::class, Plugins::EVENT_AFTER_LOAD_PLUGINS, function() {
             if ($this->isInstalled && !Craft::$app->getPlugins()->isPluginUpdatePending($this)) {
