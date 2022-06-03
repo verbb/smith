@@ -100,7 +100,7 @@ class FieldController extends Controller
                 'typeHandle' => $blockType->handle,
                 'enabled' => $block->enabled,
                 'bodyHtml' => $blockInfo['bodyHtml'],
-                'footHtml' => $blockInfo['footHtml'],
+                'js' => $blockInfo['footHtml'],
             ];
         }
 
