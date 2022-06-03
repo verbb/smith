@@ -6,10 +6,25 @@
 - Now requires PHP `8.0.2+`.
 - Now requires Craft `4.0.0+`.
 
+## 1.2.3 - 2022-04-04
+
+### Fixed
+- Add support for cloning complex Matrix fields, when nested in Super Table fields.
+
+## 1.2.2 - 2022-04-02
+
+### Fixed
+- Fix un-saved Super Table and Matrix combinations not being able to be cloned.
+
+## 1.2.1 - 2022-03-24
+
+### Fixed
+- Fix an error when viewing a revision for an entry/element.
+
 ## 1.2.0 - 2022-01-11
 
 ### Changed
-- Now require Craft 3.7.31+.
+- Now requires Craft 3.7.31+.
 
 ### Fixed
 - Fix compatibility with Craft 3.7.31.
