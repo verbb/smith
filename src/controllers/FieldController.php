@@ -49,7 +49,7 @@ class FieldController extends Controller
             }
 
             // Try to find a saved block to get data from
-            if ($blockElement = MatrixBlock::find()->id($blockId)->one()) {
+            if (!strstr($blockId, 'new') && $blockElement = MatrixBlock::find()->id($blockId)->one()) {
                 $field = Craft::$app->getFields()->getFieldById($blockElement->fieldId);
                 $blockType = $blockElement->getType();
 
