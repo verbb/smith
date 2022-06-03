@@ -172,10 +172,10 @@ Craft.Smith.Menu = Garnish.Base.extend({
             data.placeholderKey = matrixField.settings.placeholderKey;
 
             // Fetch the blocks, rendered with values
-            Craft.postActionRequest('smith/field/render-matrix-blocks', data, $.proxy(function(response, textStatus) {
-                if (textStatus === 'success' && response.success) {
-                    for (var i = 0; i < response.blocks.length; i++) {
-                        var block = response.blocks[i];
+            Craft.sendActionRequest('POST', 'smith/field/render-matrix-blocks', { data })
+                .then((response) => {
+                    for (var i = 0; i < response.data.blocks.length; i++) {
+                        var block = response.data.blocks[i];
 
                         // Save the blocktype content
                         var originalBlock = matrixField.blockTypesByHandle[block.typeHandle];
@@ -185,15 +185,17 @@ Craft.Smith.Menu = Garnish.Base.extend({
 
                         // Trigger the addBlock function - this adds a new block, so we're not duplicating code
                         var $newBlock = matrixField.addBlock(block.typeHandle, $insertBefore);
-
+                        
                         // Then, re-set back, so new blocks don't use copied content
                         matrixField.blockTypesByHandle[block.typeHandle] = originalBlock;
-                    };
-                }
-
-                // Hide the spinner
-                $spinner.remove();
-            }, this));
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    $spinner.remove();
+                });
         } catch(e) { }
     },
 
