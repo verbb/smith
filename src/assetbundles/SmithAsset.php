@@ -21,7 +21,7 @@ class SmithAsset extends AssetBundle
         $this->depends = [
             VerbbCpAsset::class,
             CpAsset::class,
-            MatrixAsset::class
+            MatrixAsset::class,
         ];
 
         $this->js = [

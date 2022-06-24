@@ -40,7 +40,7 @@ class Smith extends Plugin
 
         Event::on(Plugins::class, Plugins::EVENT_AFTER_LOAD_PLUGINS, function() {
             if ($this->isInstalled && !Craft::$app->plugins->doesPluginRequireDatabaseUpdate($this)) {
-                if (!Craft::$app->request->isCpRequest || Craft::$app->request->getAcceptsJson()) {
+                if (!Craft::$app->getRequest()->isCpRequest || Craft::$app->getRequest()->getAcceptsJson()) {
                     return;
                 }
 
