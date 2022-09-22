@@ -161,6 +161,14 @@
       "oA" : 2,
       "oAP" : "\/src\/Smith.php",
       "oF" : 0
+    },
+    "\/src\/translations\/en\/smith.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/translations\/en\/smith.php",
+      "oF" : 0
     }
   },
   "hooks" : [
