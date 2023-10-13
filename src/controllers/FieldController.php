@@ -71,7 +71,7 @@ class FieldController extends Controller
                     continue;
                 }
 
-                $blockTypes = Craft::$app->getMatrix()->getBlockTypesByFieldId($field->id);
+                $blockTypes = $field->getEntryTypes();
                 $blockType = ArrayHelper::firstWhere($blockTypes, 'handle', $blockTypeHandle);
 
                 if (!$blockType) {

@@ -1,3 +1,5 @@
+> Due to the upcoming changes in Craft 5, Smith will likely be retired, as all functionality will be available in Craft itself.
+
 # Smith plugin for Craft CMS
 <img width="500" src="https://verbb.imgix.net/plugins/smith/smith-social-card.png?v=1">
 

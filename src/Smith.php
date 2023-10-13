@@ -33,15 +33,9 @@ class Smith extends Plugin
 
         self::$plugin = $this;
 
-        $this->_registerComponents();
-        $this->_registerLogTarget();
-
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_LOAD_PLUGINS, function() {
-            if ($this->isInstalled && !Craft::$app->getPlugins()->isPluginUpdatePending($this)) {
-                if (!Craft::$app->getRequest()->getIsCpRequest() || Craft::$app->getRequest()->getAcceptsJson()) {
-                    return;
-                }
-
+        // Defer most setup tasks until Craft is fully initialized:
+        Craft::$app->onInit(function() {
+            if (Craft::$app->getRequest()->getIsCpRequest()) {
                 $view = Craft::$app->getView();
                 $view->registerAssetBundle(SmithAsset::class);
                 $view->registerJs('new Craft.Smith.Init();');
