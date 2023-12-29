@@ -23,12 +23,10 @@ class FieldController extends Controller
 
         $renderedBlocks = [];
 
-        $request = Craft::$app->getRequest();
-
-        $fieldHandle = $request->getParam('field');
-        $blocks = $request->getParam('blocks');
-        $namespace = $request->getParam('namespace');
-        $placeholderKey = $request->getParam('placeholderKey');
+        $fieldHandle = $this->request->getParam('field');
+        $blocks = $this->request->getParam('blocks');
+        $namespace = $this->request->getParam('namespace');
+        $placeholderKey = $this->request->getParam('placeholderKey');
 
         // Allow blocks to send through a namespace, so we can render them properly in-context
         // Mostly for when the Matrix field is nested in another field.
