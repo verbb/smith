@@ -246,6 +246,14 @@
       "oAP" : "\/src\/Smith.php",
       "oF" : 0
     },
+    "\/src\/translations\/de\/smith.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/translations\/de\/smith.php",
+      "oF" : 0
+    },
     "\/src\/translations\/en\/smith.php" : {
       "cB" : 0,
       "ft" : 8192,
