@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-          "verbb\\smith\\": "src/"
+            "verbb\\smith\\": "src/"
         }
     },
     "extra": {
