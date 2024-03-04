@@ -1,5 +1,5 @@
-# Smith plugin for Craft CMS
-<img width="500" src="https://verbb.imgix.net/plugins/smith/smith-social-card.png?v=3">
+<p align="center"><img src="https://verbb.imgix.net/plugins/smith/smith-icon.svg" width="100" height="100" alt="Smith icon"></p>
+<h1 align="center">Smith for Craft CMS</h1>
 
 Smith is a Craft CMS plugin that extends the native behaviour of Matrix fields, by adding Copy, Paste and Clone functionality to each block. This allows you to duplicate matrix blocks, or even copy and paste content between entries in different sections.
 
