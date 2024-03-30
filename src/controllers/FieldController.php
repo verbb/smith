@@ -1,14 +1,18 @@
 <?php
 namespace verbb\smith\controllers;
 
-use verbb\smith\Smith;
-
 use Craft;
-use craft\elements\MatrixBlock;
-use craft\helpers\ArrayHelper;
-use craft\helpers\Json;
+use craft\base\Element;
+use craft\elements\ElementCollection;
+use craft\elements\Entry;
+use craft\elements\db\EntryQuery;
+use craft\fields\Matrix;
+use craft\helpers\ElementHelper;
+use craft\helpers\StringHelper;
 use craft\web\Controller;
 
+use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class FieldController extends Controller
@@ -21,90 +25,93 @@ class FieldController extends Controller
         $this->requireAcceptsJson();
         $this->requirePostRequest();
 
-        $renderedBlocks = [];
+        $blockData = [];
+        $blocks = $this->request->getRequiredBodyParam('blocks', []);
 
-        $fieldHandle = $this->request->getParam('field');
-        $blocks = $this->request->getParam('blocks');
-        $namespace = $this->request->getParam('namespace');
-        $placeholderKey = $this->request->getParam('placeholderKey');
+        foreach ($blocks as $block) {
+            $uid = $block['uid'];
+            $fieldId = $block['fieldId'];
+            $entryTypeId = $block['entryTypeId'];
+            $ownerId = $block['ownerId'];
+            $ownerElementType = $block['ownerElementType'];
+            $siteId = $block['siteId'];
+            $namespace = $block['namespace'];
 
-        // Allow blocks to send through a namespace, so we can render them properly in-context
-        // Mostly for when the Matrix field is nested in another field.
-        if (!$namespace) {
-            $namespace = 'fields';
-        }
+            $currentEntry = Entry::find()->uid($uid)->one();
 
-        foreach ($blocks as $blockData) {
-            // Fetch the field from the block element used. A reliable way to deal with nested fields
-            $blockId = $blockData['blockId'] ?? '';
-            $blockTypeHandle = $blockData['type'] ?? '';
-
-            if (!$blockId) {
-                Smith::error("Missing blockId from request.");
-                Smith::error(Json::encode($blockData));
-
-                continue;
+            $elementsService = Craft::$app->getElements();
+            $owner = $elementsService->getElementById($ownerId, $ownerElementType, $siteId);
+            if (!$owner) {
+                throw new BadRequestHttpException("Invalid owner ID, element type, or site ID.");
             }
 
-            // Try to find a saved block to get data from
-            if (!strstr($blockId, 'new') && $blockElement = MatrixBlock::find()->id($blockId)->one()) {
-                $field = Craft::$app->getFields()->getFieldById($blockElement->fieldId);
-                $blockType = $blockElement->getType();
-
-                if (!$field) {
-                    Smith::error("Unable to find field for “{$blockElement->fieldId}”.");
-                    Smith::error(Json::encode($blockData));
-
-                    continue;
-                }
-            } else {
-                // This might've been a newly-created block, not yet saved. Not foolproof (when dealing with
-                // nested fields like Neo/ST), but at least handles base Matrix setups.
-                $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle, false);
-
-                if (!$field) {
-                    Smith::error("Unable to find field for “{$fieldHandle}”.");
-                    Smith::error(Json::encode($blockData));
-
-                    continue;
-                }
-
-                $blockTypes = $field->getEntryTypes();
-                $blockType = ArrayHelper::firstWhere($blockTypes, 'handle', $blockTypeHandle);
-
-                if (!$blockType) {
-                    Smith::error("Unable to find block type for “{$blockTypeHandle}”.");
-                    Smith::error(Json::encode($blockData));
-
-                    continue;
-                }
+            $field = $owner->getFieldLayout()?->getFieldById($fieldId);
+            if (!$field instanceof Matrix) {
+                throw new BadRequestHttpException("Invalid Matrix field ID: $fieldId");
             }
 
-            $block = new MatrixBlock();
-            $block->fieldId = $field->id;
-            $block->typeId = $blockType->id;
-            $block->siteId = Craft::$app->getSites()->getCurrentSite()->id;
-
-            $block->enabled = $blockData['enabled'] ?? false;
-
-            if (isset($blockData['fields'])) {
-                $block->setFieldValues($blockData['fields']);
+            $entryType = Craft::$app->getEntries()->getEntryTypeById($entryTypeId);
+            if (!$entryType) {
+                throw new BadRequestHttpException("Invalid entry type ID: $entryTypeId");
             }
 
-            $blockInfo = Smith::$plugin->getField()->renderMatrixBlock($namespace, $field, $block, $placeholderKey);
+            $site = Craft::$app->getSites()->getSiteById($siteId, true);
+            if (!$site) {
+                throw new BadRequestHttpException("Invalid site ID: $siteId");
+            }
 
-            $renderedBlocks[] = [
-                'typeId' => $blockType->id,
-                'typeHandle' => $blockType->handle,
-                'enabled' => $block->enabled,
-                'bodyHtml' => $blockInfo['bodyHtml'],
-                'js' => $blockInfo['footHtml'],
+            /** @var Entry $entry */
+            $entry = Craft::createObject([
+                'class' => Entry::class,
+                'siteId' => $siteId,
+                'uid' => StringHelper::UUID(),
+                'typeId' => $entryType->id,
+                'fieldId' => $fieldId,
+                'owner' => $owner,
+                'title' => $currentEntry->title,
+                'slug' => ElementHelper::tempSlug(),
+            ]);
+
+            $entry->setFieldValues($currentEntry->getSerializedFieldValues());
+
+            $user = static::currentUser();
+            if (!$elementsService->canSave($entry, $user)) {
+                throw new ForbiddenHttpException('User not authorized to create this element.');
+            }
+
+            $entry->setScenario(Element::SCENARIO_ESSENTIALS);
+
+            if (!$elementsService->saveElement($entry, false)) {
+                return $this->asFailure(Craft::t('app', 'Couldn’t create {type}.', [
+                    'type' => Entry::lowerDisplayName(),
+                ]));
+            }
+
+            /** @var EntryQuery|ElementCollection $value */
+            $value = $owner->getFieldValue($field->handle);
+
+            $view = $this->getView();
+
+            /** @var Entry[] $entries */
+            $entries = $value->all();
+
+            $html = $view->namespaceInputs(fn() => $view->renderTemplate('_components/fieldtypes/Matrix/block.twig', [
+                'name' => $field->handle,
+                'entryTypes' => $field->getEntryTypesForField($entries, $owner),
+                'entry' => $entry,
+                'isFresh' => true,
+            ]), $namespace);
+
+            $blockData[] = [
+                'blockHtml' => $html,
+                'headHtml' => $view->getHeadHtml(),
+                'bodyHtml' => $view->getBodyHtml(),
             ];
         }
 
         return $this->asJson([
             'success' => true,
-            'blocks' => $renderedBlocks,
+            'blocks' => $blockData,
         ]);
     }
 }
