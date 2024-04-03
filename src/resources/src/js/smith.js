@@ -15,6 +15,13 @@ Craft.Smith.Init = Garnish.Base.extend({
     smithMenus: [],
 
     init: function(options) {
+        this.initSmith();
+
+        // Initialize again when opening an element slideout
+        Garnish.on(Craft.CpScreenSlideout, 'load', this.initSmith.bind(this));
+    },
+
+    initSmith: function() {
         Garnish.requestAnimationFrame($.proxy(function() {
             var $matrixFields = Garnish.$doc.find('.matrix-field');
 
@@ -263,9 +270,15 @@ Craft.Smith.Menu = Garnish.Base.extend({
             }
 
             var params = Craft.expandPostArray(parsedPostData);
-
             var fields = params.fields;
 
+            // If we're in a slide-out, handle things differently
+            const $slideout = document.querySelector('.slideout-container:not(.hidden)');
+
+            if ($slideout) {
+                fields = Object.values(params)[0].fields;
+            }
+                
             for (var fieldHandle in fields) {
                 data.field = fieldHandle;
 
