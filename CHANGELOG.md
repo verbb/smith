@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 - 2024-04-10
+
+### Fixed
+- Fix plugin not working correctly in element slide-out editors.
+
 ## 2.0.0 - 2022-06-03
 
 ### Changed
