@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.0-beta.2 - 2024-04-12
+
+### Changed
+- Update support for Matrix in Craft 5.
+
+### Fixed
+- Fix plugin not working correctly in element slide-out editors.
+- Fix 'nystudio107/craft-plugin-vite' version.
+
 ## 3.0.0-beta.1 - 2024-03-04
 
 ### Changed
