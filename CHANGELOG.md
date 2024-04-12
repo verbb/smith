@@ -6,6 +6,11 @@
 - Now requires PHP `8.2.0+`.
 - Now requires Craft `5.0.0-beta.1+`.
 
+## 2.0.1 - 2024-04-10
+
+### Fixed
+- Fix plugin not working correctly in element slide-out editors.
+
 ## 2.0.0 - 2022-06-03
 
 ### Changed

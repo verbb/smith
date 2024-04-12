@@ -15,6 +15,13 @@ Craft.Smith.Init = Garnish.Base.extend({
     smithMenus: [],
 
     init: function(options) {
+        this.initSmith();
+
+        // Initialize again when opening an element slideout
+        Garnish.on(Craft.CpScreenSlideout, 'load', this.initSmith.bind(this));
+    },
+
+    initSmith: function() {
         Garnish.requestAnimationFrame($.proxy(function() {
             var $matrixFields = Garnish.$doc.find('.matrix-field');
 
