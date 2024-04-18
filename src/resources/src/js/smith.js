@@ -155,7 +155,7 @@ Craft.Smith.Menu = Garnish.Base.extend({
             var fieldHandle = this.$matrixField.attr('id');
 
             // Find copy data for this field
-            if (data && fieldHandle.includes('fields-' + data.field)) {
+            if (data && fieldHandle.includes(data.fieldId)) {
                 canPaste = true;
             }
         } catch(e) { }
@@ -236,12 +236,13 @@ Craft.Smith.Menu = Garnish.Base.extend({
     },
 
     _serializeBlocks: function() {
-        var data = {
-            blocks: []
-        };
-
         var matrixField = this.$matrixField.data('matrix');
         var $selectedItems = matrixField.entrySelect.$selectedItems;
+
+        var data = {
+            fieldId: matrixField.id,
+            blocks: []
+        };
 
         if (!$selectedItems.length) {
             $selectedItems = this.$matrixBlock;
