@@ -37,7 +37,11 @@ class FieldController extends Controller
             $siteId = $block['siteId'];
             $namespace = $block['namespace'];
 
-            $currentEntry = Entry::find()->uid($uid)->one();
+            $currentEntry = Entry::find()->uid($uid)->status(null)->one();
+
+            if (!$currentEntry) {
+                throw new BadRequestHttpException("Invalid entry UID $uid.");
+            }
 
             $elementsService = Craft::$app->getElements();
             $owner = $elementsService->getElementById($ownerId, $ownerElementType, $siteId);
