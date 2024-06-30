@@ -37,7 +37,7 @@ class FieldController extends Controller
             $siteId = $block['siteId'];
             $namespace = $block['namespace'];
 
-            $currentEntry = Entry::find()->uid($uid)->status(null)->one();
+            $currentEntry = Entry::find()->siteId('*')->uid($uid)->status(null)->one();
 
             if (!$currentEntry) {
                 throw new BadRequestHttpException("Invalid entry UID $uid.");
