@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.0 - 2024-08-09
+
+### Changed
+- Now requires Craft 5.1+.
+
+### Fixed
+- Fix an issue when cloning and pasting blocks, where the source field would have their blocks duplicated.
+- Fix an error working with non-primary site elements.
+
 ## 3.0.0 - 2024-05-18
 
 ### Changed
