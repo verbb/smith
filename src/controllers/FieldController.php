@@ -26,16 +26,17 @@ class FieldController extends Controller
         $this->requirePostRequest();
 
         $blockData = [];
+        $target = $this->request->getRequiredBodyParam('target', []);
         $blocks = $this->request->getRequiredBodyParam('blocks', []);
 
         foreach ($blocks as $block) {
             $uid = $block['uid'];
             $fieldId = $block['fieldId'];
             $entryTypeId = $block['entryTypeId'];
-            $ownerId = $block['ownerId'];
-            $ownerElementType = $block['ownerElementType'];
-            $siteId = $block['siteId'];
-            $namespace = $block['namespace'];
+            $ownerId = $target['ownerId'];
+            $ownerElementType = $target['ownerElementType'];
+            $siteId = $target['siteId'];
+            $namespace = $target['namespace'];
 
             $currentEntry = Entry::find()->siteId('*')->uid($uid)->status(null)->one();
 

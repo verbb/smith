@@ -195,6 +195,15 @@ Craft.Smith.Menu = Garnish.Base.extend({
             // Figure out the next block, to instruct Matrix to insert before that one
             var $insertBefore = $spinner;
 
+            // Add in information about where we're pasting into
+            data.target = {
+                fieldId: matrixField.settings.fieldId,
+                ownerId: matrixField.settings.ownerId,
+                ownerElementType: matrixField.settings.ownerElementType,
+                siteId: matrixField.settings.siteId,
+                namespace: matrixField.settings.namespace,
+            };
+
             // Fetch the blocks, rendered with values
             Craft.sendActionRequest('POST', 'smith/field/render-matrix-blocks', { data })
                 .then((response) => {
