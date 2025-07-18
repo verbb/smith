@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.2 - 2025-07-18
+
+### Changed
+- Update non-English translations.
+- Update English translations.
+
 ## 2.0.1 - 2024-04-10
 
 ### Fixed
