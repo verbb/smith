@@ -1,7 +1,7 @@
 # Requirements
 
 ## Craft CMS
-Smith requires Craft CMS 5.1 or later within Craft 5.
+Smith requires Craft CMS 5.1 or greater.
 
 ## PHP
 Smith requires PHP 8.2 or greater.
