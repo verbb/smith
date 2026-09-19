@@ -1,6 +1,3 @@
-> [!NOTE]
-> Due to the upcoming changes in Craft 5, Smith will likely be retired, as all functionality will be available in Craft itself.
-
 <p align="center"><img src="https://assets.verbb.io/plugins/smith/smith-icon.svg" width="100" height="100" alt="Smith icon"></p>
 <h1 align="center">Smith for Craft CMS</h1>
 
