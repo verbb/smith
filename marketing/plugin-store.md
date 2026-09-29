@@ -4,10 +4,9 @@ Copy a Matrix block, paste it into a compatible field, or clone it in place. Com
 
 ## Features
 
-- **Copy blocks:** Place a Matrix block and its field values on the clipboard.
-- **Paste blocks:** Reuse copied content in another compatible Matrix field.
-- **Clone in place:** Duplicate a block beside the original as a quick starting point.
-- **Complex values:** Carry a block’s configured fields instead of recreating them one by one.
-- **Native results:** Continue editing pasted blocks through Craft’s normal Matrix interface.
-- **Faster authoring:** Turn repeated content patterns into a few deliberate actions.
-- **Native Matrix workflow:** Smith adds its actions to the controls editors already use rather than creating a separate content store. The resulting blocks remain ordinary Craft Matrix entries ready for further editing.
+- Place a Matrix block and its field values on the clipboard.
+- Reuse copied content in another compatible Matrix field.
+- Duplicate a block beside the original as a quick starting point.
+- Carry a block's configured fields instead of recreating them one by one.
+- Continue editing pasted blocks through Craft's normal Matrix interface.
+- Turn repeated content patterns into a few deliberate actions.
