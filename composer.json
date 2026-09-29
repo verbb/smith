@@ -1,6 +1,6 @@
 {
     "name": "verbb/smith",
-    "description": "Add copy, paste and clone functionality to Matrix blocks.",
+    "description": "A Craft CMS plugin for copying, pasting and cloning Matrix blocks.",
     "type": "craft-plugin",
     "version": "3.1.2",
     "keywords": [
