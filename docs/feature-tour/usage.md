@@ -1,6 +1,8 @@
 # Usage
 Smith adds these functions to the settings 'cog' icon, in the top-right of each matrix block.
 
+![Smith actions in a Matrix block menu](../../screenshots/smith-matrix-actions.png)
+
 ### Clone
 To clone a block, select `Clone` in the settings menu for a block. This will add a new block at the end of your existing blocks, with the content duplicated. You can only clone a single block at a time.
 

@@ -7,7 +7,7 @@ Smith adds copy, paste, and clone tools to Craft Matrix fields. Reuse a carefull
 
 Copy a Matrix block, paste it into a compatible field, or clone it in place. Complex blocks with several fields become practical starting points instead of a sequence of manual selections and duplicated values.
 
-![A populated Craft Matrix field with Smith’s Copy, Paste, and Clone actions open.](../screenshots/output/feature-tour/smith-matrix-actions.png)
+![A populated Craft Matrix field with Smith’s Copy, Paste, and Clone actions open.](../screenshots/smith-matrix-actions.png)
 
 <!-- feature-section-end -->
 
