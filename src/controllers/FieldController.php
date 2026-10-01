@@ -46,21 +46,25 @@ class FieldController extends Controller
 
             $elementsService = Craft::$app->getElements();
             $owner = $elementsService->getElementById($ownerId, $ownerElementType, $siteId);
+
             if (!$owner) {
                 throw new BadRequestHttpException("Invalid owner ID, element type, or site ID.");
             }
 
             $field = $owner->getFieldLayout()?->getFieldById($fieldId);
+
             if (!$field instanceof Matrix) {
                 throw new BadRequestHttpException("Invalid Matrix field ID: $fieldId");
             }
 
             $entryType = Craft::$app->getEntries()->getEntryTypeById($entryTypeId);
+
             if (!$entryType) {
                 throw new BadRequestHttpException("Invalid entry type ID: $entryTypeId");
             }
 
             $site = Craft::$app->getSites()->getSiteById($siteId, true);
+
             if (!$site) {
                 throw new BadRequestHttpException("Invalid site ID: $siteId");
             }
@@ -80,6 +84,7 @@ class FieldController extends Controller
             $entry->setFieldValues($currentEntry->getSerializedFieldValues());
 
             $user = static::currentUser();
+
             if (!$elementsService->canSave($entry, $user)) {
                 throw new ForbiddenHttpException('User not authorized to create this element.');
             }
