@@ -192,42 +192,79 @@ Craft.Smith.Menu = Garnish.Base.extend({
             // Get the Matrix field JS instance
             var matrixField = this.$matrixField.data('matrix');
 
+            if (!matrixField.canAddMoreEntries(data.blocks.length)) {
+                Craft.cp.displayError(Craft.t(
+                    'app',
+                    'Entry could not be added. Maximum number of entries reached.'
+                ));
+                $spinner.remove();
+                return;
+            }
+
             // Figure out the next block, to instruct Matrix to insert before that one
             var $insertBefore = $spinner;
 
-            // Add in information about where we're pasting into
-            data.target = {
-                fieldId: matrixField.settings.fieldId,
-                ownerId: matrixField.settings.ownerId,
-                ownerElementType: matrixField.settings.ownerElementType,
-                siteId: matrixField.settings.siteId,
-                namespace: matrixField.settings.namespace,
-            };
+            var prepareDraft = Promise.resolve();
 
-            // Fetch the blocks, rendered with values
-            Craft.sendActionRequest('POST', 'smith/field/render-matrix-blocks', { data })
-                .then((response) => {
-                    for (var i = 0; i < response.data.blocks.length; i++) {
-                        var data = response.data.blocks[i];
+            if (matrixField.elementEditor) {
+                prepareDraft = matrixField.elementEditor.setFormValue(
+                    matrixField.settings.baseInputName,
+                    '*'
+                );
+            }
 
-                        const $entry = $(data.blockHtml);
+            prepareDraft
+                .then(() => {
+                    var queue = matrixField.elementEditor && matrixField.elementEditor.queue ?
+                        matrixField.elementEditor.queue :
+                        Craft.queue;
 
-                        $entry.insertBefore($insertBefore);
+                    return queue.push(() => {
+                        // Add in information about where we're pasting into
+                        data.target = {
+                            fieldId: matrixField.settings.fieldId,
+                            ownerId: matrixField.settings.ownerId,
+                            ownerElementType: matrixField.settings.ownerElementType,
+                            siteId: matrixField.settings.siteId,
+                            namespace: matrixField.settings.namespace,
+                        };
 
-                        matrixField.trigger('entryAdded', {
-                            $entry: $entry,
-                        });
+                        // Fetch the blocks, rendered with values
+                        return Craft.sendActionRequest('POST', 'smith/field/render-matrix-blocks', { data })
+                            .then((response) => {
+                                var pauseEditor = matrixField.elementEditor ? matrixField.elementEditor.pause() : Promise.resolve();
 
-                        Craft.initUiElements($entry.children('.fields'));
-                        Craft.appendHeadHtml(data.headHtml);
-                        Craft.appendBodyHtml(data.bodyHtml);
+                                return pauseEditor
+                                    .then(() => {
+                                        for (var i = 0; i < response.data.blocks.length; i++) {
+                                            var blockData = response.data.blocks[i];
 
-                        new Craft.MatrixInput.Entry(matrixField, $entry);
+                                            const $entry = $(blockData.blockHtml);
 
-                        matrixField.entrySort.addItems($entry);
-                        matrixField.entrySelect.addItems($entry);
-                        matrixField.updateAddEntryBtn();
-                    }
+                                            $entry.insertBefore($insertBefore);
+
+                                            matrixField.trigger('entryAdded', {
+                                                $entry: $entry,
+                                            });
+
+                                            Craft.initUiElements($entry.children('.fields'));
+                                            Craft.appendHeadHtml(blockData.headHtml);
+                                            Craft.appendBodyHtml(blockData.bodyHtml);
+
+                                            new Craft.MatrixInput.Entry(matrixField, $entry);
+
+                                            matrixField.entrySort.addItems($entry);
+                                            matrixField.entrySelect.addItems($entry);
+                                            matrixField.updateAddEntryBtn();
+                                        }
+                                    })
+                                    .finally(() => {
+                                        if (matrixField.elementEditor) {
+                                            matrixField.elementEditor.resume();
+                                        }
+                                    });
+                            });
+                    });
                 })
                 .catch((error) => {
                     console.error(error);
