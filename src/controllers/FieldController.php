@@ -30,7 +30,8 @@ class FieldController extends Controller
         $blocks = $this->request->getRequiredBodyParam('blocks', []);
 
         foreach ($blocks as $block) {
-            $uid = $block['uid'];
+            $uid = $block['uid'] ?? null;
+            $sourceSiteId = $block['siteId'] ?? null;
             $fieldId = $block['fieldId'];
             $entryTypeId = $block['entryTypeId'];
             $ownerId = $target['ownerId'];
@@ -38,13 +39,34 @@ class FieldController extends Controller
             $siteId = $target['siteId'];
             $namespace = $target['namespace'];
 
-            $currentEntry = Entry::find()->siteId('*')->uid($uid)->status(null)->one();
+            if (!is_string($uid) || !StringHelper::isUUID($uid)) {
+                throw new BadRequestHttpException('Invalid entry UID.');
+            }
+
+            if (!is_int($sourceSiteId) && (!is_string($sourceSiteId) || !ctype_digit($sourceSiteId))) {
+                throw new BadRequestHttpException('Invalid source site ID.');
+            }
+
+            $sourceSiteId = (int)$sourceSiteId;
+            $sourceSite = Craft::$app->getSites()->getSiteById($sourceSiteId, true);
+
+            if (!$sourceSite) {
+                throw new BadRequestHttpException("Invalid source site ID: $sourceSiteId");
+            }
+
+            $currentEntry = Entry::find()->siteId($sourceSite->id)->uid($uid)->status(null)->one();
 
             if (!$currentEntry) {
-                throw new BadRequestHttpException("Invalid entry UID $uid.");
+                throw new BadRequestHttpException('Invalid entry UID.');
             }
 
             $elementsService = Craft::$app->getElements();
+            $user = static::currentUser();
+
+            if (!$elementsService->canView($currentEntry, $user)) {
+                throw new ForbiddenHttpException('User not authorized to copy this element.');
+            }
+
             $owner = $elementsService->getElementById($ownerId, $ownerElementType, $siteId);
 
             if (!$owner) {
@@ -82,8 +104,6 @@ class FieldController extends Controller
             ]);
 
             $entry->setFieldValues($currentEntry->getSerializedFieldValues());
-
-            $user = static::currentUser();
 
             if (!$elementsService->canSave($entry, $user)) {
                 throw new ForbiddenHttpException('User not authorized to create this element.');
