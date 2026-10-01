@@ -163,13 +163,15 @@ Craft.Smith.Menu = Garnish.Base.extend({
     },
 
     pasteBlock: function(e, data) {
+        var $spinner;
+
         try {
             if (!data) {
                 var data = JSON.parse(localStorage.getItem('smith:block'));
             }
 
             var $blockContainer = this.$matrixField.find('.blocks');
-            var $spinner = $('<div class="spinner smith-spinner"></div>').insertAfter(this.$matrixBlock);
+            $spinner = $('<div class="spinner smith-spinner"></div>').insertAfter(this.$matrixBlock);
 
             // Get the Matrix field JS instance
             var matrixField = this.$matrixField.data('matrix');
@@ -249,12 +251,30 @@ Craft.Smith.Menu = Garnish.Base.extend({
                     });
                 })
                 .catch((error) => {
-                    console.error(error);
+                    this._displayPasteError(error);
                 })
                 .finally(() => {
                     $spinner.remove();
                 });
-        } catch(e) { }
+        } catch(error) {
+            if ($spinner) {
+                $spinner.remove();
+            }
+
+            this._displayPasteError(error);
+        }
+    },
+
+    _displayPasteError: function(error) {
+        var message = error && error.response && error.response.data ?
+            error.response.data.message :
+            null;
+
+        Craft.cp.displayError(
+            message || Craft.t('app', 'An error occurred while processing your request.')
+        );
+
+        console.error(error);
     },
 
     cloneBlock: function(e) {
