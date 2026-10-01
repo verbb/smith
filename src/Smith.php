@@ -5,8 +5,10 @@ use verbb\smith\assetbundles\SmithAsset;
 use verbb\smith\base\PluginTrait;
 
 use Craft;
+use craft\base\Field;
 use craft\base\Plugin;
-use craft\services\Plugins;
+use craft\fields\Matrix;
+use craft\web\View;
 
 use yii\base\Event;
 
@@ -35,11 +37,23 @@ class Smith extends Plugin
 
         // Defer most setup tasks until Craft is fully initialized:
         Craft::$app->onInit(function() {
-            if (Craft::$app->getRequest()->getIsCpRequest()) {
+            if (
+                !Craft::$app->getRequest()->getIsCpRequest() ||
+                Craft::$app->getUser()->getIsGuest() ||
+                version_compare(Craft::$app->getVersion(), '5.7.0', '>=')
+            ) {
+                return;
+            }
+
+            Event::on(Matrix::class, Field::EVENT_DEFINE_INPUT_HTML, function() {
                 $view = Craft::$app->getView();
                 $view->registerAssetBundle(SmithAsset::class);
-                $view->registerJs('new Craft.Smith.Init();');
-            }
+                $view->registerJs(
+                    'Craft.Smith.instance = Craft.Smith.instance || new Craft.Smith.Init();',
+                    View::POS_READY,
+                    'smith-init',
+                );
+            });
         });
     }
 }

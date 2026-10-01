@@ -9,6 +9,7 @@
 - Fixed Matrix entries being pasted into the wrong field.
 - Fixed newly-added Matrix entries not being able to be copied or cloned.
 - Fixed duplicate and keyboard-inaccessible Matrix actions.
+- Fixed Smith assets loading on control panel pages where they aren’t needed.
 - Fixed paste and clone errors not being shown in the control panel.
 - Fixed Smith actions not appearing on newly-added Matrix blocks.
 
