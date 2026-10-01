@@ -81,7 +81,7 @@ class FieldController extends Controller
                 throw new BadRequestHttpException("Invalid source site ID: $sourceSiteId");
             }
 
-            $currentEntry = Entry::find()->siteId($sourceSite->id)->uid($uid)->status(null)->one();
+            $currentEntry = Entry::find()->siteId($sourceSite->id)->uid($uid)->drafts(null)->status(null)->one();
 
             if (!$currentEntry) {
                 throw new BadRequestHttpException('Invalid entry UID.');

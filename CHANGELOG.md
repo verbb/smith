@@ -7,6 +7,7 @@
 - Fixed a low-severity authorization vulnerability.
 - Fixed copied Matrix blocks being saved before their owner element was saved.
 - Fixed Matrix entries being pasted into the wrong field.
+- Fixed newly-added Matrix entries not being able to be copied or cloned.
 - Fixed Smith actions not appearing on newly-added Matrix blocks.
 
 ## 3.1.2 - 2026-09-14
