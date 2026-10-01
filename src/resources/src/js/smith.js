@@ -56,8 +56,17 @@ Craft.Smith.Init = Garnish.Base.extend({
             return true;
         }
 
-        if (!$matrixBlock.data('entry')) {
+        var blockInstance = $matrixBlock.data('entry');
+
+        if (!blockInstance) {
             return false;
+        }
+
+        // Craft 5.7+ provides its own Matrix copy, paste and duplicate actions.
+        if (blockInstance.$actionMenu.find('[data-action="copy"]').length) {
+            $matrixBlock.data('renderedSmith', true);
+
+            return true;
         }
 
         new Craft.Smith.Menu($matrixField, $matrixBlock);
@@ -81,9 +90,9 @@ Craft.Smith.Menu = Garnish.Base.extend({
         var $deleteOption = this.blockInstance.$actionMenu.find('[data-action="delete"]').parents('ul');
 
         // Create our buttons
-        this.$copyBtn = $('<a data-icon="copy" data-action="copy">' + Craft.t('app', 'Copy') + '</a>');
-        this.$pasteBtn = $('<a data-icon="paste" data-action="paste">' + Craft.t('app', 'Paste') + '</a>');
-        this.$cloneBtn = $('<a data-icon="clone" data-action="clone">' + Craft.t('app', 'Clone') + '</a>');
+        this.$copyBtn = this._createActionButton('copy', 'Copy');
+        this.$pasteBtn = this._createActionButton('paste', 'Paste');
+        this.$cloneBtn = this._createActionButton('clone', 'Clone');
 
         // Add new menu items to the DOM
         const $ul = $('<ul/>');
@@ -93,9 +102,9 @@ Craft.Smith.Menu = Garnish.Base.extend({
         $ul.insertBefore($deleteOption);
         $('<hr class="padded">').insertBefore($deleteOption);
 
-        this.addListener(this.$copyBtn, 'click', this.handleClick);
-        this.addListener(this.$pasteBtn, 'click', this.handleClick);
-        this.addListener(this.$cloneBtn, 'click', this.handleClick);
+        this.addListener(this.$copyBtn, 'activate', this.handleClick);
+        this.addListener(this.$pasteBtn, 'activate', this.handleClick);
+        this.addListener(this.$cloneBtn, 'activate', this.handleClick);
 
         // Perform some checks
         this.checkPaste();
@@ -104,8 +113,19 @@ Craft.Smith.Menu = Garnish.Base.extend({
         this.$matrixBlock.data('renderedSmith', true);
     },
 
+    _createActionButton: function(action, label) {
+        return $('<button/>', {
+            type: 'button',
+            class: 'menu-item',
+            'data-action': action,
+        }).append($('<span/>', {
+            class: 'menu-item-label',
+            text: Craft.t('app', label),
+        }));
+    },
+
     handleClick: function(e) {
-        var $option = $(e.target);
+        var $option = $(e.currentTarget);
 
         if ($option.hasClass('disabled') || $option.hasClass('sel')) {
             return;
