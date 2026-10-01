@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a low-severity information disclosure vulnerability.
+- Fixed a low-severity authorization vulnerability.
 
 ## 3.1.2 - 2026-09-14
 

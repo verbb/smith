@@ -22,6 +22,7 @@ class FieldController extends Controller
 
     public function actionRenderMatrixBlocks(): Response
     {
+        $this->requireCpRequest();
         $this->requireAcceptsJson();
         $this->requirePostRequest();
 
