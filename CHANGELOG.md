@@ -6,6 +6,7 @@
 - Fixed a low-severity information disclosure vulnerability.
 - Fixed a low-severity authorization vulnerability.
 - Fixed copied Matrix blocks being saved before their owner element was saved.
+- Fixed Smith actions not appearing on newly-added Matrix blocks.
 
 ## 3.1.2 - 2026-09-14
 

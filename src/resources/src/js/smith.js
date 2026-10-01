@@ -12,13 +12,14 @@ if (typeof Craft.Smith === typeof undefined) {
 (function($) {
 
 Craft.Smith.Init = Garnish.Base.extend({
-    smithMenus: [],
-
     init: function(options) {
-        this.initSmith();
+        // Initialize Smith on new Matrix entries
+        Garnish.on(Craft.MatrixInput, 'entryAdded', $.proxy(this, 'entryAdded'));
 
         // Initialize again when opening an element slideout
         Garnish.on(Craft.CpScreenSlideout, 'load', this.initSmith.bind(this));
+
+        this.initSmith();
     },
 
     initSmith: function() {
@@ -31,65 +32,44 @@ Craft.Smith.Init = Garnish.Base.extend({
 
                 for (var j = 0; j < $matrixBlocks.length; j++) {
                     var $matrixBlock = $($matrixBlocks[j]);
-                    var $settingsBtn = $matrixBlock.find('.actions .settings.menubtn');
-
-                    // Don't do this for static blocks
-                    if ($matrixBlock.hasClass('static')) {
-                        continue;
-                    }
-
-                    // Create a new class for this specific Matrix field and block
-                    this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks));
+                    this.addMenu($matrixField, $matrixBlock);
                 }
-            }
-
-            // Create a callback for new blocks
-            Garnish.on(Craft.MatrixInput, 'blockAdded', $.proxy(this, 'blockAdded'));
-
-            // Allow for Super Table's nested Matrix JS
-            if (Craft.SuperTable && Craft.SuperTable.MatrixInputAlt) {
-                Garnish.on(Craft.SuperTable.MatrixInputAlt, 'blockAdded', $.proxy(this, 'blockAdded'));
             }
         }, this));
     },
 
-    blockAdded: function(e) {
+    entryAdded: function(e, attempt) {
+        attempt = attempt || 0;
+
         Garnish.requestAnimationFrame($.proxy(function() {
             var $matrixField = e.target.$container;
-            var $matrixBlocks = $matrixField.find('> .blocks > .matrixblock');
-            var $matrixBlock = $(e.$block);
+            var $matrixBlock = $(e.$entry);
 
-            var blockInstance = $matrixBlock.data('block');
-
-            // Try again if the menu button isn't initialised yet
-            if (!blockInstance) {
-                this.blockAdded(e);
-                return;
+            if (!this.addMenu($matrixField, $matrixBlock) && attempt < 60) {
+                this.entryAdded(e, attempt + 1);
             }
-
-            // Update all Smith menus' with the correct matrix blocks
-            $.each(this.smithMenus, function(index, menu) {
-                menu.$matrixBlocks = $matrixBlocks;
-            });
-
-            // Don't do this for static blocks
-            if ($matrixBlock.hasClass('static')) {
-                return;
-            }
-
-            // Create a new Smith menu class for the new block
-            setTimeout(() => {
-                this.smithMenus.push(new Craft.Smith.Menu($matrixField, $matrixBlock, $matrixBlocks));
-            }, 200);
         }, this));
+    },
+
+    addMenu: function($matrixField, $matrixBlock) {
+        if ($matrixBlock.hasClass('static') || $matrixBlock.data('renderedSmith')) {
+            return true;
+        }
+
+        if (!$matrixBlock.data('entry')) {
+            return false;
+        }
+
+        new Craft.Smith.Menu($matrixField, $matrixBlock);
+
+        return true;
     },
 });
 
 Craft.Smith.Menu = Garnish.Base.extend({
-    init: function($matrixField, $matrixBlock, $matrixBlocks) {
+    init: function($matrixField, $matrixBlock) {
         this.$matrixField = $matrixField;
         this.$matrixBlock = $matrixBlock;
-        this.$matrixBlocks = $matrixBlocks;
 
         if (this.$matrixBlock.data('renderedSmith')) {
             return;
