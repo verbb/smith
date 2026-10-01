@@ -29,16 +29,42 @@ class FieldController extends Controller
         $blockData = [];
         $target = $this->request->getRequiredBodyParam('target', []);
         $blocks = $this->request->getRequiredBodyParam('blocks', []);
+        $targetFieldId = $target['fieldId'] ?? null;
+        $ownerId = $target['ownerId'];
+        $ownerElementType = $target['ownerElementType'];
+        $siteId = $target['siteId'];
+        $namespace = $target['namespace'];
+
+        if (!is_int($targetFieldId) && (!is_string($targetFieldId) || !ctype_digit($targetFieldId))) {
+            throw new BadRequestHttpException('Invalid target Matrix field ID.');
+        }
+
+        $targetFieldId = (int)$targetFieldId;
+        $elementsService = Craft::$app->getElements();
+        $user = static::currentUser();
+        $owner = $elementsService->getElementById($ownerId, $ownerElementType, $siteId);
+
+        if (!$owner) {
+            throw new BadRequestHttpException("Invalid owner ID, element type, or site ID.");
+        }
+
+        $field = $owner->getFieldLayout()?->getFieldById($targetFieldId);
+
+        if (!$field instanceof Matrix) {
+            throw new BadRequestHttpException("Invalid Matrix field ID: $targetFieldId");
+        }
+
+        $site = Craft::$app->getSites()->getSiteById($siteId, true);
+
+        if (!$site) {
+            throw new BadRequestHttpException("Invalid site ID: $siteId");
+        }
+
+        $entriesToCreate = [];
 
         foreach ($blocks as $block) {
             $uid = $block['uid'] ?? null;
             $sourceSiteId = $block['siteId'] ?? null;
-            $fieldId = $block['fieldId'];
-            $entryTypeId = $block['entryTypeId'];
-            $ownerId = $target['ownerId'];
-            $ownerElementType = $target['ownerElementType'];
-            $siteId = $target['siteId'];
-            $namespace = $target['namespace'];
 
             if (!is_string($uid) || !StringHelper::isUUID($uid)) {
                 throw new BadRequestHttpException('Invalid entry UID.');
@@ -61,44 +87,23 @@ class FieldController extends Controller
                 throw new BadRequestHttpException('Invalid entry UID.');
             }
 
-            $elementsService = Craft::$app->getElements();
-            $user = static::currentUser();
-
             if (!$elementsService->canView($currentEntry, $user)) {
                 throw new ForbiddenHttpException('User not authorized to copy this element.');
             }
 
-            $owner = $elementsService->getElementById($ownerId, $ownerElementType, $siteId);
-
-            if (!$owner) {
-                throw new BadRequestHttpException("Invalid owner ID, element type, or site ID.");
+            if ((int)$currentEntry->fieldId !== $targetFieldId) {
+                throw new BadRequestHttpException('Source entry does not belong to the target Matrix field.');
             }
 
-            $field = $owner->getFieldLayout()?->getFieldById($fieldId);
-
-            if (!$field instanceof Matrix) {
-                throw new BadRequestHttpException("Invalid Matrix field ID: $fieldId");
-            }
-
-            $entryType = Craft::$app->getEntries()->getEntryTypeById($entryTypeId);
-
-            if (!$entryType) {
-                throw new BadRequestHttpException("Invalid entry type ID: $entryTypeId");
-            }
-
-            $site = Craft::$app->getSites()->getSiteById($siteId, true);
-
-            if (!$site) {
-                throw new BadRequestHttpException("Invalid site ID: $siteId");
-            }
+            $entryTypeId = (int)$currentEntry->typeId;
 
             /** @var Entry $entry */
             $entry = Craft::createObject([
                 'class' => Entry::class,
                 'siteId' => $siteId,
                 'uid' => StringHelper::UUID(),
-                'typeId' => $entryType->id,
-                'fieldId' => $fieldId,
+                'typeId' => $entryTypeId,
+                'fieldId' => $targetFieldId,
                 'primaryOwner' => $owner,
                 'owner' => $owner,
                 'title' => $currentEntry->title,
@@ -112,24 +117,35 @@ class FieldController extends Controller
             }
 
             $entry->setScenario(Element::SCENARIO_ESSENTIALS);
+            $entriesToCreate[] = $entry;
+        }
 
+        /** @var EntryQuery|ElementCollection $value */
+        $value = $owner->getFieldValue($field->handle);
+
+        /** @var Entry[] $entries */
+        $entries = $value->all();
+        $entryTypes = $field->getEntryTypesForField($entries, $owner);
+        $allowedEntryTypeIds = array_fill_keys(array_map(fn($entryType) => $entryType->id, $entryTypes), true);
+
+        foreach ($entriesToCreate as $entry) {
+            if (!isset($allowedEntryTypeIds[$entry->typeId])) {
+                throw new BadRequestHttpException('Source entry type is not available for the target Matrix field.');
+            }
+        }
+
+        foreach ($entriesToCreate as $entry) {
             if (!Craft::$app->getDrafts()->saveElementAsDraft($entry, $user->id, markAsSaved: false)) {
                 return $this->asFailure(Craft::t('app', 'Couldn’t create {type}.', [
                     'type' => Entry::lowerDisplayName(),
                 ]));
             }
 
-            /** @var EntryQuery|ElementCollection $value */
-            $value = $owner->getFieldValue($field->handle);
-
             $view = $this->getView();
-
-            /** @var Entry[] $entries */
-            $entries = $value->all();
 
             $html = $view->namespaceInputs(fn() => $view->renderTemplate('_components/fieldtypes/Matrix/block.twig', [
                 'name' => $field->handle,
-                'entryTypes' => $field->getEntryTypesForField($entries, $owner),
+                'entryTypes' => $entryTypes,
                 'entry' => $entry,
                 'isFresh' => true,
             ]), $namespace);
