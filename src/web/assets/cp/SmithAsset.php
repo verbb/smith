@@ -1,12 +1,12 @@
 <?php
-namespace verbb\smith\assetbundles;
+namespace verbb\smith\web\assets\cp;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 use craft\web\assets\matrix\MatrixAsset;
 use craft\web\View;
 
-use verbb\base\assetbundles\CpAsset as VerbbCpAsset;
+use verbb\base\web\assets\cp\CpAsset as VerbbCpAsset;
 
 class SmithAsset extends AssetBundle
 {
@@ -15,7 +15,7 @@ class SmithAsset extends AssetBundle
 
     public function init(): void
     {
-        $this->sourcePath = "@verbb/smith/resources/dist";
+        $this->sourcePath = '@verbb/smith/web/assets/cp/dist';
 
         $this->depends = [
             VerbbCpAsset::class,
@@ -24,11 +24,11 @@ class SmithAsset extends AssetBundle
         ];
 
         $this->js = [
-            'js/smith.js',
+            'smith.js',
         ];
 
         $this->css = [
-            'css/smith.css',
+            'smith.css',
         ];
 
         parent::init();

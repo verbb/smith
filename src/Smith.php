@@ -1,7 +1,7 @@
 <?php
 namespace verbb\smith;
 
-use verbb\smith\assetbundles\SmithAsset;
+use verbb\smith\web\assets\cp\SmithAsset;
 use verbb\smith\base\PluginTrait;
 
 use Craft;
