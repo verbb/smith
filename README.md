@@ -10,18 +10,19 @@ Copy a Matrix block, paste it into a compatible field, or clone it in place. Com
 - Place a Matrix block and its field values on the clipboard.
 - Reuse copied content in another compatible Matrix field.
 - Duplicate a block beside the original as a quick starting point.
-- Carry a block's configured fields instead of recreating them one by one.
 - Continue editing pasted blocks through Craft's normal Matrix interface.
-- Turn repeated content patterns into a few deliberate actions.
 
 ## Documentation
+
 Visit the [Smith Plugin page](https://verbb.io/craft-plugins/smith) for all documentation, guides, pricing and developer resources.
 
 ## Support
-Get in touch with us via the [Smith Support page](https://verbb.io/craft-plugins/smith/support) or by [creating a Github issue](https://github.com/verbb/smith/issues)
+
+Get in touch with us via the [Smith Support page](https://verbb.io/craft-plugins/smith/support) or by [creating a GitHub issue](https://github.com/verbb/smith/issues).
 
 ## Sponsor
-Smith is licensed under the MIT license, meaning it will always be free and open source - we love free stuff! If you'd like to show your support to the plugin regardless, [Sponsor](https://github.com/sponsors/verbb) development.
+
+Smith is licensed under the MIT license, so it will always be free and open source. If you'd like to support it anyway, you can [sponsor its development](https://github.com/sponsors/verbb).
 
 <h2></h2>
 
