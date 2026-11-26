@@ -81,7 +81,20 @@ class FieldController extends Controller
                 throw new BadRequestHttpException("Invalid source site ID: $sourceSiteId");
             }
 
-            $currentEntry = Entry::find()->siteId($sourceSite->id)->uid($uid)->drafts(null)->status(null)->one();
+            $currentEntry = null;
+            $sourceId = $block['id'] ?? null;
+
+            // Prefer the version the element editor last saved (for example, a provisional draft's copy of the entry),
+            // so unsaved edits are included. It must still be the entry the UID refers to.
+            if (is_int($sourceId) || (is_string($sourceId) && ctype_digit($sourceId))) {
+                $candidate = Entry::find()->id((int)$sourceId)->siteId($sourceSite->id)->drafts(null)->provisionalDrafts(null)->status(null)->one();
+
+                if ($candidate && ($candidate->uid === $uid || $candidate->getCanonicalUid() === $uid)) {
+                    $currentEntry = $candidate;
+                }
+            }
+
+            $currentEntry ??= Entry::find()->siteId($sourceSite->id)->uid($uid)->drafts(null)->status(null)->one();
 
             if (!$currentEntry) {
                 throw new BadRequestHttpException('Invalid entry UID.');

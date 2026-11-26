@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed cloning or copying a Matrix block using its last saved content instead of unsaved changes, such as reordered table rows. ([#31](https://github.com/verbb/smith/issues/31))
+- Fixed cloning or copying a previously-selected Matrix block instead of the block whose menu was used. ([#15](https://github.com/verbb/smith/issues/15))
+
 ## 3.1.4 - 2026-10-22
 
 ### Changed

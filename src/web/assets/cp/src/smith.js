@@ -170,16 +170,30 @@ Craft.Smith.Menu = Garnish.Base.extend({
     },
 
     copyBlock: function(e) {
-        var data = this._serializeBlocks();
+        var elementEditor = this.$matrixField.data('matrix').elementEditor;
+        var saveChanges = Promise.resolve();
 
-        localStorage.setItem('smith:block', JSON.stringify(data));
+        // Save any pending changes first, so the copy includes them
+        if (elementEditor && typeof elementEditor.checkForm === 'function') {
+            saveChanges = Promise.resolve(elementEditor.checkForm());
+        }
 
-        var count = data.blocks.length;
-        var message = count == 1 ? '1 block copied' : '{n} blocks copied';
+        saveChanges
+            .then(() => {
+                var data = this._serializeBlocks();
 
-        Craft.cp.displayNotice(Craft.t('app', message, { n: count }));
+                localStorage.setItem('smith:block', JSON.stringify(data));
 
-        this.checkPaste();
+                var count = data.blocks.length;
+                var message = count == 1 ? '1 block copied' : '{n} blocks copied';
+
+                Craft.cp.displayNotice(Craft.t('app', message, { n: count }));
+
+                this.checkPaste();
+            })
+            .catch((error) => {
+                this._displayPasteError(error);
+            });
     },
 
     pasteBlock: function(e, data) {
@@ -232,6 +246,11 @@ Craft.Smith.Menu = Garnish.Base.extend({
                             siteId: matrixField.settings.siteId,
                             namespace: matrixField.settings.namespace,
                         };
+
+                        // Use the latest saved version of each block, now that the draft is saved
+                        data.blocks.forEach((block) => {
+                            block.id = this._getDraftElementId(matrixField, block.id);
+                        });
 
                         // Fetch the blocks, rendered with values
                         return Craft.sendActionRequest('POST', 'smith/field/render-matrix-blocks', { data })
@@ -303,6 +322,15 @@ Craft.Smith.Menu = Garnish.Base.extend({
         this.pasteBlock(e, data);
     },
 
+    _getDraftElementId: function(matrixField, id) {
+        // The element editor saves edited nested entries as new elements owned by the draft
+        if (id && matrixField.elementEditor && typeof matrixField.elementEditor.getDraftElementId === 'function') {
+            return matrixField.elementEditor.getDraftElementId(id) || id;
+        }
+
+        return id;
+    },
+
     _serializeBlocks: function() {
         var matrixField = this.$matrixField.data('matrix');
         var $selectedItems = matrixField.entrySelect.$selectedItems;
@@ -312,7 +340,8 @@ Craft.Smith.Menu = Garnish.Base.extend({
             blocks: []
         };
 
-        if (!$selectedItems.length) {
+        // Only act on the selection when several blocks are selected and this block is one of them
+        if ($selectedItems.length < 2 || !$selectedItems.is(this.$matrixBlock)) {
             $selectedItems = this.$matrixBlock;
         }
 
@@ -320,7 +349,7 @@ Craft.Smith.Menu = Garnish.Base.extend({
             var $blockItem = $($selectedItems[i]);
 
             data.blocks.push({
-                id: $blockItem.data('id'),
+                id: this._getDraftElementId(matrixField, $blockItem.data('id')),
                 uid: $blockItem.data('uid'),
                 fieldId: matrixField.settings.fieldId,
                 entryTypeId: $blockItem.data('type-id'),
