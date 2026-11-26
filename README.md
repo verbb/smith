@@ -1,6 +1,9 @@
 <p align="center"><img src="https://assets.verbb.io/plugins/smith/smith-icon.svg" width="100" height="100" alt="Smith icon"></p>
 <h1 align="center">Smith for Craft CMS</h1>
 
+> [!NOTE]
+> Craft 5.7+ includes native copy, paste and duplicate for Matrix fields. Smith is no longer needed on Craft 5.7+ and does nothing there, so you can uninstall it once you've upgraded. Smith will not be updated for Craft 6.
+
 Smith is a Craft CMS plugin that adds copy, paste, and clone tools to Craft Matrix fields. Reuse a carefully configured block within an entry or carry it to another compatible field without rebuilding every value.
 
 Copy a Matrix block, paste it into a compatible field, or clone it in place. Complex blocks with several fields become practical starting points instead of a sequence of manual selections and duplicated values.
